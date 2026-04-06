@@ -123,10 +123,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    BASE_DIR /"static",  
-]
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR /"static"]
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 
 # Login URLs
 LOGIN_URL = '/login/'
@@ -142,5 +143,4 @@ os.makedirs(os.path.join(MEDIA_ROOT, 'upload_profils'), exist_ok=True)
 os.makedirs(os.path.join(MEDIA_ROOT, 'upload_projets'), exist_ok=True)
 os.makedirs(os.path.join(MEDIA_ROOT, 'upload_phases'), exist_ok=True)
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
