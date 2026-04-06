@@ -84,9 +84,8 @@ WSGI_APPLICATION = 'projet_sigep.wsgi.application'
 #     }
 # }
 
-
 DATABASES = {
-    'default': {dj_database_url.config(default=config('DATABASES-URL'))}
+    'default': dj_database_url.config(default=config('DATABASES_URL'))
 }
 
 
