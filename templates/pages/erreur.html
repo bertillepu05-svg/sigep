@@ -1,0 +1,9 @@
+        {# Afficher les erreurs non field (générales) #}
+        {% if form.non_field_errors %}
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}

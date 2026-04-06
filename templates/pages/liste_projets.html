@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SIGEP - Liste des projets{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static "/css/liste_projets1.css" %}">
+{% endblock %}
+
+{% block name %}
+    {% if statut_actuel == 'a_venir' %}
+        Projets à venir
+    {% elif statut_actuel == 'en_cours' %}
+        Projets en cours
+    {% elif statut_actuel == 'termine' %}
+        Projets terminés  
+    {% else %}
+        Tous les projets
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<!-- ============================================ -->
+<!-- FILTRES -->
+<!-- ============================================ -->
+<div class="filters-card">
+    <div class="filters-title">
+        <i class="fas fa-filter me-2"></i>Filtrer par statut
+    </div>
+    <div class="filter-buttons">
+        <a href="{% url 'liste_projets' %}" class="filter-btn {% if not statut_actuel %}active{% endif %}">
+            <i class="fas fa-list me-1"></i>Tous
+        </a>
+        <a href="{% url 'projets_a_venir' %}" class="filter-btn {% if statut_actuel == 'a_venir' %}active{% endif %}">
+            <i class="fas fa-clock me-1"></i>À venir
+        </a>
+        <a href="{% url 'projets_en_cours' %}" class="filter-btn {% if statut_actuel == 'en_cours' %}active{% endif %}">
+            <i class="fas fa-spinner me-1"></i>En cours
+        </a>
+        <a href="{% url 'projets_termines' %}" class="filter-btn {% if statut_actuel == 'termine' %}active{% endif %}">
+            <i class="fas fa-check-circle me-1"></i>Terminés
+        </a>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LISTE DES PROJETS -->
+<!-- ============================================ -->
+<div class="row">
+    {% if projets %}
+        {% for projet in projets %}
+        <div class="col-xl-4 col-lg-6 col-md-6 mb-4">
+            <div class="project-card">
+                <div class="project-image">
+                    {% if projet.photo %}
+                        <img src="{{ projet.photo.url }}" alt="{{ projet.titre }}">
+                    {% else %}
+                        <img src="{% static 'images/default-project.jpg' %}" alt="Image par défaut">
+                    {% endif %}
+                    <span class="project-badge 
+                        {% if projet.statut == 'a_venir' %}badge-avenir
+                        {% elif projet.statut == 'en_cours' %}badge-cours
+                        {% elif projet.statut == 'termine' %}badge-termine
+                        {% elif projet.statut == 'annule' %}badge-annule
+                        {% else %}badge-suspendu{% endif %}">
+                        {{ projet.get_statut_display }}
+                    </span>
+                </div>
+                <div class="project-content">
+                    <h5 class="project-title">{{ projet.titre }}</h5>
+                    <p class="project-description">{{ projet.description|truncatewords:20 }}</p>
+                    
+                    <div class="project-meta">
+                        <span><i class="fas fa-building"></i> {{ projet.chef_projet.nom_ministere|default:"Ministère"|truncatechars:20 }}</span>
+                        <span><i class="fas fa-industry"></i> {{ projet.entreprise.nom|default:"Non assignée"|truncatechars:20 }}</span>
+                        <span><i class="fas fa-calendar"></i> {{ projet.date_debut|date:"d/m/Y" }}</span>
+                    </div>
+                    
+                    <div class="progress-section">
+                        <div class="progress-label">
+                            <span>Avancement</span>
+                            <span>{{ projet.avancement_moyen|default:0 }}%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: {{ projet.avancement_moyen|default:0 }}%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-footer">
+                        <a href="{% url 'details_projets' projet.id_projet %}" class="btn-details">
+                            <i class="fas fa-eye"></i> Détails
+                        </a>
+                        
+                        <!-- Bouton suivre (pour observateurs) -->
+                        {% if user.is_authenticated and user.profile.role == 'observateur' %}
+                            {% with suivis=user.projets_suivis.all %}
+                                {% with est_suivi=projet.suivi_par.all|dictsort:"utilisateur.id"|first %}
+                                    <form method="post" action="{% url 'toggle_suivre' projet.id_projet %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn-follow {% if est_suivi %}following{% endif %}" 
+                                                title="{% if est_suivi %}Ne plus suivre{% else %}Suivre ce projet{% endif %}">
+                                            <i class="fas fa-heart"></i>
+                                        </button>
+                                    </form>
+                                {% endwith %}
+                            {% endwith %}
+                        {% endif %}
+                        
+                        <!-- Bouton modifier (pour chef de projet) -->
+                        {% if user.is_authenticated and user.profile.role == 'chef' and projet.chef_projet.user == user %}
+                            <a href="{% url 'modifier_projet' projet.id_projet %}" class="btn-details" style="background: #ffc107; color: #1e3c72;">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="alert-empty">
+                <i class="fas fa-folder-open"></i>
+                <h4>Aucun projet trouvé</h4>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- ============================================ -->
+<!-- PAGINATION -->
+<!-- ============================================ -->
+{% if projets.has_other_pages %}
+<nav aria-label="Navigation">
+    <ul class="pagination">
+        {% if projets.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ projets.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </li>
+        {% endif %}
+        
+        {% for num in projets.paginator.page_range %}
+            {% if projets.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > projets.number|add:'-3' and num < projets.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if projets.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ projets.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static '/js/entreprises/liste_projets.js' %}"></script>
+{% endblock  %}

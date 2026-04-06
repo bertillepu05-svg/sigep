@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Authentification{% endblock %} - SIGEP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    {# Bootstrap CSS #}
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    
+    {# Font Awesome pour les icônes #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    {# CSS personnalisé #}
+    <link rel="stylesheet" href="{% static 'css/auth/auth1.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="auth-page">
+    
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="auth-logo">
+                <h1 class="h2">SIGEP</h1>
+                <p class="text-muted">Système de Gestion de Projets</p>
+            </div>
+            
+            {# Messages #}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+    
+    <div class="auth-footer">
+        <p class="text-white-50">&copy; 2024 SIGEP. <a href="/" class="text-white">Retour au site</a></p>
+    </div>
+    
+    {# Bootstrap JS #}
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/auth.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

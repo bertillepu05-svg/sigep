@@ -1,0 +1,194 @@
+{% load static %}
+
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEP - Page d'Accueil</title>
+    <link rel="stylesheet" href="{% static '/css/style1.css' %}">
+    <link rel="stylesheet" href="{% static '/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+</head>
+<body>
+
+            <!-- Navigation bar -->
+            <nav class="sticky-top">
+                <div class="link">
+                    <div class="icone">SIGEP</div>
+                    <button class="menu-toggle" aria-label="Menu">
+                        <span class="hamburger"></span>
+                    </button>
+                    <div class="pages">
+                        <a href="/" class="active"><i class="fas fa-home"></i> Accueil</a>
+                        <a href="/projets/"><i class="fas fa-list"></i> Projets</a>
+                        {% if user.is_authenticated %}
+                            <a href="/deconnexion/"><i class="fas fa-sign-out-alt"></i> Deconnexion</a>
+                        {% else %}
+                            <a href="/connexion/"><i class="fas fa-sign-out-alt"></i> Connexion</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Principal section -->
+            <section class="Principal_section p-5">
+                <div class="content">
+                    <h4>Bienvenue à SIGEP</h4>
+                    <h1>Suivez les projets publics en toute transparence.</h1>
+                    <p>Maîtrisez le processus de gestion et suivez les projets publics.
+                    </p>
+                    <div class="button">
+                        <a href="/projets/" class="btn btn-primary">Voir les projets</a>
+                    </div>
+                </div>
+            </section>
+ 
+        <!-- Cartes des utilisateurs -->
+        <section class="cards">
+            <div class="card">
+                <h3>Citoyens</h3>
+                <div class="profile-container">
+                    <!-- Image -->
+                    <div class="profile-image">
+                        <img src="{% static '/images/icons/bebe.jpg' %}" alt="Bene" width="50px" height="50px">
+                    </div>
+                    <p>Suivez les activités à venir, projets financés par Cité.</p>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Entreprises</h3>
+                    <div class="profile-dali">
+                        <img src="{% static '/images/icons/dali.jpg' %}" alt="dali" width="50px" height="50px">
+                    </div>
+                <p>Faites la démarche des entreprises au moment et ...</p>
+            </div>
+            <div class="card">
+                <h3>Chefs de Projet</h3>
+                 <div class="profile-image">
+                        <img src="{% static '/images/icons/bene.jpg' %}" alt="BEBE" width="50px" height="50px">
+                    </div>
+                <p>Certifiez vos projets avec un score de satisfaction élevé.</p>
+            </div>
+            <div class="card">
+                <h3>Administrateur</h3>
+                <div class="profile-image">
+                        <img src="{% static '/images/icons/bertille.jpg' %}" alt="bertille" width="50px" height="50px">
+                    </div>
+                <p>Aidez vos apprenants, administrer les projets publics.</p>
+            </div>
+        </section>
+    
+        <!-- Section À propos -->
+        <section id="apropos">
+            <h2>À Propos de SIGEP</h2>
+            <div class="about-content">
+                <p class="highlight">
+                    SIGEP (Système informatique de Gestion des Projets) est conçu pour permettre la répartition d'un budget public.
+                </p>
+                <p>
+                    Les projets sont financés par l'État, les plafonds et les subventions. Les résultats sont évalués sur le plan des résultats de projet. Les projets sont soumis à une surveillance régulière.
+                </p>
+            </div>
+
+            <div class="objectives">
+                <h3>Objectifs :</h3>
+                <ul class="objectives-list">
+                    <li><i class="fas fa-check-circle"></i> Améliorer la transparence</li>
+                    <li><i class="fas fa-check-circle"></i> Réduire les budgets</li>
+                    <li><i class="fas fa-check-circle"></i> Réduire l'avancement des projets</li>
+                    <li><i class="fas fa-check-circle"></i> Faciliter la gestion des projets publics</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section Contact -->
+        <section id="contact" >
+            <h2>Nous contacter</h2>
+            <div class="contact-card">
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <strong>Adresse :</strong>
+                        <p>Ministère des projets publics</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <strong>Email :</strong>
+                        <p><a href="mailto:contact@sigep.fr">Contact@sigep.fr</a></p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <div>
+                        <strong>Téléphone :</strong>
+                        <p>+243 82 517 12 05</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+    <!-- Pied de page -->
+    <footer class="container-fluid">
+        <p>&copy; 2026 SIGEP - Tous droits réservés</p>
+    </footer>
+
+
+    <!-- Menu hamburger JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const pages = document.querySelector('.pages');
+            const body = document.body;
+            
+            // Créer l'overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'menu-overlay';
+            body.appendChild(overlay);
+            
+            // Ouvrir/fermer le menu
+            menuToggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                pages.classList.toggle('active');
+                overlay.classList.toggle('active');
+                body.style.overflow = pages.classList.contains('active') ? 'hidden' : '';
+            });
+            
+            // Fermer le menu en cliquant sur l'overlay
+            overlay.addEventListener('click', function() {
+                menuToggle.classList.remove('active');
+                pages.classList.remove('active');
+                this.classList.remove('active');
+                body.style.overflow = '';
+            });
+            
+            // Fermer le menu en cliquant sur un lien
+            const menuLinks = pages.querySelectorAll('a');
+            menuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    menuToggle.classList.remove('active');
+                    pages.classList.remove('active');
+                    overlay.classList.remove('active');
+                    body.style.overflow = '';
+                });
+            });
+            
+            // Gérer le redimensionnement de la fenêtre
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    menuToggle.classList.remove('active');
+                    pages.classList.remove('active');
+                    overlay.classList.remove('active');
+                    body.style.overflow = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+

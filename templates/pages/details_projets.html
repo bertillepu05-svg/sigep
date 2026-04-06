@@ -1,0 +1,885 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SIGEP - Détails du projet{% endblock %}
+
+{% block extra_css %}
+
+{% endblock %}
+
+{% block name %}Détails du projet{% endblock %}
+    <link rel="stylesheet" href="{% static "/css/details_projets.css" %}">
+{% block content %}
+<!-- ============================================ -->
+<!-- DÉTAILS & IMAGE DU PROJET -->
+<!-- ============================================ -->
+<div class="row">
+    <div class="col-xl-6 col-lg-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-chart-bar me-2"></i>
+                Description du projet
+            </div>
+            <div class="card-body">
+                <div class="card-title">
+                    <h3>{{ projet.titre }}</h3>
+                    <span class="badge-statut 
+                        {% if projet.statut == 'a_venir' %}badge-avenir
+                        {% elif projet.statut == 'en_cours' %}badge-cours
+                        {% elif projet.statut == 'termine' %}badge-termine
+                        {% elif projet.statut == 'annule' %}badge-annule
+                        {% else %}badge-retard{% endif %}">
+                        {{ projet.get_statut_display }}
+                    </span>
+                </div>
+                <p class="text-muted pt-3">
+                    {{ projet.description }}
+                </p>
+                <p class="text-muted">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    Domaine : {{ projet.get_domaine_activite_display|default:projet.domaine_activite }}
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-6 col-lg-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-image me-2"></i>
+                Image du projet
+            </div>
+            <div class="card-body text-center">
+                {% if projet.photo %}
+                    <img src="{{ projet.photo.url }}" 
+                         alt="{{ projet.titre }}" 
+                         class="photo-projet" width="70%">
+                {% else %}
+                    <img src="{% static 'images/projets/default-project.jpg' %}" 
+                         alt="Image par défaut" 
+                         class="photo-projet">
+                {% endif %}
+                <p class="text-muted mt-3">
+                    <i class="fas fa-map-marker-alt me-2" style="color: #27bfd4;"></i>
+                    {{ projet.province|default:"Localisation non spécifiée" }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- INFORMATIONS GÉNÉRALES & OBJECTIFS -->
+<!-- ============================================ -->
+<div class="row">
+    <div class="col-xl-6 col-lg-7">
+        <div class="card stat-card info mt-4">
+            <div class="card-header">
+                <i class="fas fa-info-circle me-2"></i>
+                Informations générales
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong><i class="fas fa-building me-2" style="color: #27bfd4;"></i>Ministère:</strong>
+                        <span class="badge bg-light text-dark">{{ projet.chef_projet.nom_ministere|default:"Non défini" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong><i class="fas fa-industry me-2" style="color: #27bfd4;"></i>Entreprise:</strong>
+                        <span class="badge bg-light text-dark">{{ projet.entreprise.nom|default:"Non assignée" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong><i class="fas fa-tag me-2" style="color: #27bfd4;"></i>Statut:</strong>
+                        <span class="badge-statut 
+                            {% if projet.statut == 'a_venir' %}badge-avenir
+                            {% elif projet.statut == 'en_cours' %}badge-cours
+                            {% elif projet.statut == 'termine' %}badge-termine
+                            {% else %}badge-retard{% endif %}">
+                            {{ projet.get_statut_display }}
+                        </span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong><i class="fas fa-calendar-alt me-2" style="color: #27bfd4;"></i>Date début:</strong>
+                        <span class="badge bg-light text-dark">{{ projet.date_debut|date:"d/m/Y" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong><i class="fas fa-calendar-check me-2" style="color: #27bfd4;"></i>Date fin prévue:</strong>
+                        <span class="badge bg-light text-dark">{{ projet.date_fin_prevue|date:"d/m/Y" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong><i class="fas fa-coins me-2" style="color: #27bfd4;"></i>Budget:</strong>
+                        <span class="badge bg-success text-white">{{ projet.budget_previsionnel|floatformat:0 }} CDF</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong><i class="fas fa-chart-line me-2" style="color: #27bfd4;"></i>Budget consommé:</strong>
+                        <span class="badge bg-info text-white">{{ budget_consomme|floatformat:0 }} CDF</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6 col-lg-7">
+        <div class="card stat-card object mt-4">
+            <div class="card-header">
+                <i class="fas fa-bullseye me-2"></i>
+                Avancement du projet
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <p><strong><i class="fas fa-chart-line me-2" style="color: #27bfd4;"></i>Avancement global</strong></p>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Progression:</span>
+                        <span class="fw-bold text-primary">{{ avancement_moyen|floatformat:0 }}%</span>
+                    </div>
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar 
+                            {% if avancement_moyen >= 80 %}bg-success
+                            {% elif avancement_moyen >= 50 %}bg-primary
+                            {% elif avancement_moyen >= 25 %}bg-warning
+                            {% else %}bg-danger{% endif %}" 
+                            style="width: {{ avancement_moyen|floatformat:0 }}%;">
+                            {{ avancement_moyen|floatformat:0 }}%
+                        </div>
+                    </div>
+                </div>
+
+                {% if phases %}
+                <p><strong><i class="fas fa-tasks me-2" style="color: #27bfd4;"></i>Phases d'exécution</strong></p>
+                {% for phase in phases %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <span>{{ phase.nom_phase }}</span>
+                        <span class="text-{% if phase.pourcentage_avancement == 100 %}success{% elif phase.pourcentage_avancement >= 50 %}primary{% else %}warning{% endif %}">
+                            {{ phase.pourcentage_avancement }}%
+                        </span>
+                    </div>
+                    <div class="progress mb-2" style="height: 6px;">
+                        <div class="progress-bar bg-{% if phase.pourcentage_avancement == 100 %}success{% elif phase.pourcentage_avancement >= 50 %}primary{% else %}warning{% endif %}" 
+                             style="width: {{ phase.pourcentage_avancement }}%;"></div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="alert alert-secondary">
+                    <i class="fas fa-info-circle"></i>
+                    Aucune phase définie pour le moment.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============================================ -->
+<!-- SECTION GESTION DU STATUT (CHEF DE PROJET) -->
+<!-- ============================================ -->
+{% if user.is_authenticated and user.profile.role == 'chef' and projet.chef_projet.user == user %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <i class="fas fa-tasks me-2"></i>
+                Gestion du statut
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <strong>Statut actuel :</strong> 
+                    <span class="badge 
+                        {% if projet.statut == 'en_cours' %}bg-primary
+                        {% elif projet.statut == 'termine' %}bg-success
+                        {% elif projet.statut == 'a_venir' %}bg-secondary
+                        {% elif projet.statut == 'suspendu' %}bg-warning
+                        {% elif projet.statut == 'annule' %}bg-danger{% endif %}">
+                        {{ projet.get_statut_display }}
+                    </span>
+                </div>
+                
+                <form method="post" action="{% url 'changer_statut_projet' projet.id_projet %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-8">
+                            <select name="statut" class="form-select">
+                                {% for code, label in projet.STATUT_CHOIX %}
+                                    <option value="{{ code }}" {% if projet.statut == code %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-warning w-100">
+                                <i class="fas fa-save"></i> Changer le statut
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                
+                {% if projet.statut == 'a_venir' and not projet.entreprise %}
+                <div class="alert alert-danger mt-3">
+                    <i class="fas fa-exclamation-triangle"></i>
+                     Pour démarrer le projet, vous devez d'abord assigner une entreprise exécutante.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- ============================================ -->
+<!-- SECTION GESTION DES PHASES (ENTREPRISE) -->
+<!-- ============================================ -->
+{% if user.is_authenticated and user.profile.role == 'entreprise' and projet.entreprise.user == user %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <i class="fas fa-tasks me-2"></i>
+                Gestion des phases
+            </div>
+            <div class="card-body">
+                {% if projet.statut == 'en_cours' %}
+                    <a href="{% url 'ajouter_phase' projet.id_projet %}" class="btn btn-success mb-3">
+                        <i class="fas fa-plus-circle"></i> Ajouter une phase
+                    </a>
+                    <p class="text-muted">
+                        <i class="fas fa-info-circle"></i>
+                        Vous pouvez ajouter des phases pour détailler l'avancement du projet.
+                    </p>
+                {% elif projet.statut == 'a_venir' %}
+                    <div class="alert alert-secondary">
+                        <i class="fas fa-hourglass-half"></i>
+                        Le projet n'a pas encore commencé. Les phases pourront être ajoutées une fois que le projet sera en cours.
+                    </div>
+                {% elif projet.statut == 'termine' %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-check-circle"></i>
+                        Ce projet est terminé. Aucune modification n'est possible.
+                    </div>
+                {% elif projet.statut == 'annule' %}
+                    <div class="alert alert-danger">
+                        <i class="fas fa-ban"></i>
+                        Ce projet est annulé. Aucune modification n'est possible.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- ============================================ -->
+<!-- HISTORIQUE D'AVANCEMENT (TIMELINE) -->
+<!-- ============================================ -->
+<div class="row mt-4">
+    <div class="col-xl-12 col-lg-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-history me-2"></i>
+                    Historique d'avancement
+                </div>
+                <small class="text-light">
+                    <i class="far fa-clock me-1"></i> {{ phases|length }} phase(s) au total
+                </small>
+            </div>
+            <div class="card-body">
+                {% if phases %}
+                <div class="timeline">
+                    {% for phase in phases %}
+                    <div class="timeline-item">
+                        <div class="timeline-marker 
+                            {% if phase.pourcentage_avancement == 100 %}bg-success
+                            {% elif phase.pourcentage_avancement >= 50 %}bg-primary
+                            {% elif phase.pourcentage_avancement > 0 %}bg-warning
+                            {% else %}bg-secondary{% endif %}">
+                        </div>
+                        <div class="timeline-content">
+                            <h6>{{ phase.nom_phase }}</h6>
+                            <p class="text-muted">{{ phase.description|default:"Pas de description" }}</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <small class="text-muted">
+                                    <i class="far fa-calendar-alt me-1"></i> 
+                                    {{ phase.date_debut|date:"d/m/Y" }}
+                                    {% if phase.date_fin %} - {{ phase.date_fin|date:"d/m/Y" }}{% endif %}
+                                </small>
+                                <span class="badge 
+                                    {% if phase.pourcentage_avancement == 100 %}bg-success
+                                    {% elif phase.pourcentage_avancement >= 50 %}bg-primary
+                                    {% elif phase.pourcentage_avancement > 0 %}bg-warning text-dark
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ phase.pourcentage_avancement }}%
+                                </span>
+                            </div>
+                            
+                            <div class="progress mb-3" style="height: 6px;">
+                                <div class="progress-bar 
+                                    {% if phase.pourcentage_avancement == 100 %}bg-success
+                                    {% elif phase.pourcentage_avancement >= 50 %}bg-primary
+                                    {% else %}bg-warning{% endif %}" 
+                                    style="width: {{ phase.pourcentage_avancement }}%;">
+                                </div>
+                            </div>
+                            
+                            {% if phase.photo %}
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                <img src="{{ phase.photo.url }}" 
+                                     alt="{{ phase.nom_phase }}" 
+                                     class="photo-historique"
+                                     onclick="openModal('{{ phase.photo.url }}')" width="20%">
+                            </div>
+                            {% endif %}
+                            
+                            {% if user.is_authenticated and user.profile.role == 'entreprise' and projet.entreprise.user == user and projet.statut == 'en_cours' %}
+                            <div class="mt-2">
+                                <a href="{% url 'modifier_phase' phase.id_phase %}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="alert alert-secondary text-center">
+                    <i class="fas fa-info-circle"></i>
+                    Aucune phase enregistrée pour le moment.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ============================================ -->
+<!-- SECTION AVIS / NOTES -->
+<!-- ============================================ -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-star me-2"></i>
+                Avis et notations ({{ nb_avis }})
+            </div>
+            <div class="card-body">
+                
+                <!-- ===== AFFICHAGE DE LA NOTE MOYENNE ===== -->
+                <div class="row mb-4">
+                    <div class="col-md-4 text-center">
+                        <div class="bg-light rounded p-3">
+                            <div class="display-1 fw-bold text-warning">
+                                {{ note_moyenne|floatformat:1|default:"0.0" }}
+                            </div>
+                            <div class="star-rating justify-content-center">
+                                {% for i in "12345"|make_list %}
+                                    <i class="fas fa-star {% if forloop.counter <= note_moyenne|floatformat:0 %}active{% endif %}" 
+                                       style="color: #ffc107; font-size: 1.2rem;"></i>
+                                {% endfor %}
+                            </div>
+                            <small class="text-muted">Basé sur {{ nb_avis }} avis</small>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Les citoyens peuvent donner leur avis sur ce projet. Votre avis compte !
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ===== FORMULAIRE POUR DONNER SON AVIS ===== -->
+                {% if user.is_authenticated %}
+                    {% if user.profile.role == 'observateur' %}
+                        {% if avis_utilisateur %}
+                            <!-- L'utilisateur a déjà donné un avis -->
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i>
+                                Vous avez déjà donné votre avis !
+                                <a href="{% url 'donner_avis' projet.id_projet %}" class="alert-link float-end">
+                                    <i class="fas fa-edit"></i> Modifier mon avis
+                                </a>
+                            </div>
+                            <div class="card border-warning mb-3">
+                                <div class="card-header bg-warning text-dark">
+                                    <i class="fas fa-star me-2"></i>Votre avis
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-2">
+                                        {% for i in "12345"|make_list %}
+                                            <i class="fas fa-star {% if forloop.counter <= avis_utilisateur.note %}active{% endif %}" 
+                                               style="color: #ffc107; font-size: 1.2rem;"></i>
+                                        {% endfor %}
+                                        <small class="text-muted ms-2">{{ avis_utilisateur.date_avis|date:"d/m/Y" }}</small>
+                                    </div>
+                                    {% if avis_utilisateur.commentaire %}
+                                        <p class="mb-0">{{ avis_utilisateur.commentaire }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% else %}
+                            <!-- L'utilisateur n'a pas encore donné d'avis -->
+                            <div class="card border-primary mb-3">
+                                <div class="card-header bg-primary text-white">
+                                    <i class="fas fa-star me-2"></i>Donnez votre avis
+                                </div>
+                                <div class="card-body">
+                                    <form method="post" action="{% url 'donner_avis' projet.id_projet %}">
+                                        {% csrf_token %}
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="form-label fw-bold">Votre note</label>
+                                            <div class="star-rating-input">
+                                                <i class="far fa-star" data-value="1"></i>
+                                                <i class="far fa-star" data-value="2"></i>
+                                                <i class="far fa-star" data-value="3"></i>
+                                                <i class="far fa-star" data-value="4"></i>
+                                                <i class="far fa-star" data-value="5"></i>
+                                            </div>
+                                            <input type="hidden" name="note" id="noteValue" value="0">
+                                        </div>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="form-label fw-bold">Votre avis (optionnel)</label>
+                                            <textarea name="commentaire" class="form-control" rows="3" 
+                                                      placeholder="Partagez votre opinion sur ce projet..."></textarea>
+                                        </div>
+                                        
+                                        <button type="submit" class="btn btn-warning">
+                                            <i class="fas fa-paper-plane me-2"></i>Envoyer mon avis
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Seuls les observateurs peuvent donner leur avis.
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-secondary">
+                        <i class="fas fa-lock me-2"></i>
+                        <a href="{% url 'login' %}">Connectez-vous</a> pour donner votre avis sur ce projet.
+                    </div>
+                {% endif %}
+                
+                <!-- ===== LISTE DES AVIS DES AUTRES UTILISATEURS ===== -->
+                {% if avis %}
+                <div class="mt-4">
+                    <h6><i class="fas fa-list me-2"></i>Tous les avis</h6>
+                    {% for avis_item in avis %}
+                        {% if avis_item != avis_utilisateur %}
+                        <div class="avis-item border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong>{{ avis_item.utilisateur.username }}</strong>
+                                    <div class="mt-1">
+                                        {% for i in "12345"|make_list %}
+                                            <i class="fas fa-star {% if forloop.counter <= avis_item.note %}active{% endif %}" 
+                                               style="color: #ffc107; font-size: 0.9rem;"></i>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ avis_item.date_avis|date:"d/m/Y" }}</small>
+                            </div>
+                            {% if avis_item.commentaire %}
+                                <p class="mt-2 mb-0 text-muted">{{ avis_item.commentaire }}</p>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Section Commentaires -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-comments me-2"></i>
+                Commentaires ({{ commentaires|length }})
+            </div>
+            <div class="card-body">
+                {% if user.is_authenticated %}
+                <div class="mb-4">
+                    <form method="post" action="{% url 'ajouter_commentaire' projet.id_projet %}">
+                        {% csrf_token %}
+                        <textarea name="contenu" class="form-control" rows="3" 
+                                  placeholder="Partagez votre avis sur ce projet..." required></textarea>
+                        <button type="submit" class="btn btn-primary mt-2">
+                            <i class="fas fa-paper-plane"></i> Publier
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <a href="{% url 'login' %}">Connectez-vous</a> pour laisser un commentaire.
+                </div>
+                {% endif %}
+                
+                <div class="comment-list">
+                    {% for commentaire in commentaires %}
+                    <div class="comment-item" style="border-bottom: 1px solid #e9ecef; padding: 15px 0;">
+                        <div class="d-flex justify-content-between">
+                            <strong><i class="fas fa-user-circle"></i> {{ commentaire.utilisateur.username }}</strong>
+                            <small class="text-muted">{{ commentaire.date_commentaire|date:"d/m/Y H:i" }}</small>
+                        </div>
+                        <p class="mt-2">{{ commentaire.contenu }}</p>
+                        {% if commentaire.utilisateur == user %}
+                        <div class="mt-2">
+                            <a href="{% url 'modifier_commentaire' commentaire.id_commentaire %}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            <a href="{% url 'supprimer_commentaire' commentaire.id_commentaire %}" 
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('Supprimer ce commentaire ?')">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center py-4">
+                        <i class="fas fa-comment-slash fa-2x"></i><br>
+                        Aucun commentaire pour le moment. Soyez le premier à commenter !
+                    </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Section Suivi budgétaire -->
+<div class="card mt-4">
+    <div class="card-header">
+        <i class="fas fa-chart-line me-2"></i>
+        Suivi budgétaire
+    </div>
+    <div class="card-body">
+        
+        <!-- Récapitulatif -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted">Budget prévisionnel</h6>
+                        <h3 class="text-primary">{{ projet.budget_previsionnel|floatformat:0 }} CDF</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted">Budget consommé</h6>
+                        <h3 class="text-{% if pourcentage_budget >= 100 %}danger{% else %}success{% endif %}">
+                            {{ budget_consomme|floatformat:0 }} CDF
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted">Reste à dépenser</h6>
+                        <h3 class="text-info">{{ budget_restant|floatformat:0 }} CDF</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Barre de progression -->
+        <div class="mb-4">
+            <div class="d-flex justify-content-between mb-1">
+                <span>Progression budgétaire</span>
+                <span class="fw-bold">{{ pourcentage_budget|default:0 }}%</span>
+            </div>
+            <div class="progress" style="height: 25px;">
+                <div class="progress-bar 
+                    {% if pourcentage_budget >= 100 %}bg-danger
+                    {% elif pourcentage_budget >= 80 %}bg-warning
+                    {% else %}bg-success{% endif %}" 
+                    style="width: {{ pourcentage_budget|default:0 }}%;">
+                    {{ pourcentage_budget|default:0 }}%
+                </div>
+            </div>
+        </div>
+        
+        <!-- Formulaire d'ajout (pour entreprise) -->
+        {% if user.is_authenticated and user.profile.role == 'entreprise' %}
+            {% if user.profile.est_representant and user.profile.entreprise == projet.entreprise %}
+                <div class="card bg-light mb-4">
+                    <div class="card-header bg-info text-white">
+                        <i class="fas fa-plus-circle me-2"></i>Ajouter une dépense
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{% url 'ajouter_suivi_budget' projet.id_projet %}">
+                            {% csrf_token %}
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <input type="number" name="budget_consomme" class="form-control" 
+                                           placeholder="Montant (CDF)" required step="1000">
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="date" name="date_mise_a_jour" class="form-control" 
+                                           value="{% now 'Y-m-d' %}">
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="phase_id" class="form-select">
+                                        <option value="">Sélectionner une phase</option>
+                                        {% for phase in phases %}
+                                            <option value="{{ phase.id_phase }}">{{ phase.nom_phase }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-save"></i> Ajouter
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <input type="text" name="commentaire" class="form-control" 
+                                       placeholder="Commentaire (optionnel)">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            {% elif user.profile.est_employe and user.profile.entreprise == projet.entreprise %}
+                <div class="card bg-light mb-4">
+                    <div class="card-header bg-info text-white">
+                        <i class="fas fa-plus-circle me-2"></i>Ajouter une dépense
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{% url 'ajouter_suivi_budget' projet.id_projet %}">
+                            {% csrf_token %}
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <input type="number" name="budget_consomme" class="form-control" 
+                                           placeholder="Montant (CDF)" required step="1000">
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="date" name="date_mise_a_jour" class="form-control" 
+                                           value="{% now 'Y-m-d' %}">
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="phase_id" class="form-select">
+                                        <option value="">Sélectionner une phase</option>
+                                        {% for phase in phases %}
+                                            <option value="{{ phase.id_phase }}">{{ phase.nom_phase }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-save"></i> Ajouter
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <input type="text" name="commentaire" class="form-control" 
+                                       placeholder="Commentaire (optionnel)">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Vous êtes connecté en tant qu'entreprise, mais vous n'êtes pas assigné à ce projet.
+                    Seule l'entreprise assignée peut enregistrer des dépenses.
+                </div>
+            {% endif %}
+        {% endif %}
+        
+        <!-- Historique des dépenses -->
+        <h6 class="mt-4">
+            <i class="fas fa-history me-2"></i>Historique des dépenses
+            <span class="badge bg-secondary">{{ suivis_budget|length }}</span>
+        </h6>
+        
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Phase</th>
+                        <th>Montant</th>
+                        <th>Commentaire</th>
+                        {% if user.is_authenticated %}
+                            {% if user.profile.role == 'entreprise' and user.entreprise_representee %}
+                                <th>Actions</th>
+                            {% endif %}
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for suivi in suivis %}
+                    <tr>
+                        <td>{{ suivi.date_mise_a_jour|date:"d/m/Y" }}</td>
+                        <td>
+                            {% if suivi.phase %}
+                                <span class="badge bg-info">{{ suivi.phase.nom_phase }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Global</span>
+                            {% endif %}
+                        </td>
+                        <td class="fw-bold">{{ suivi.budget_consomme|floatformat:0 }} CDF</td>
+                        <td>{{ suivi.commentaire|default:"-" }}</td>
+                        {% if user.is_authenticated %}
+                            {% if user.profile.role == 'entreprise' and user.entreprise_representee %}
+                                <td>
+                                    <a href="{% url 'modifier_suivi_budget' suivi.id_suivi %}" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'supprimer_suivi_budget' suivi.id_suivi %}" 
+                                    class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Supprimer cette dépense ?')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            {% endif %}
+                        {% endif %}
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="{% if user.is_authenticated and user.profile.role == 'entreprise' %}5{% else %}4{% endif %}" class="text-center py-4">
+                            <i class="fas fa-chart-line fa-2x text-muted mb-2"></i>
+                            <p class="text-muted mb-0">Aucune dépense enregistrée</p>
+                            <small class="text-muted">Les dépenses apparaîtront ici une fois ajoutées</small>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                {% if suivis_budget %}
+                <tfoot class="table-light">
+                    <tr class="fw-bold">
+                        <td colspan="2">TOTAL</td>
+                        <td>{{ budget_consomme|floatformat:0 }} CDF</td>
+                        <td colspan="{% if user.is_authenticated and user.profile.role == 'entreprise' %}2{% else %}1{% endif %}"></td>
+                    </tr>
+                </tfoot>
+                {% endif %}
+            </table>
+        </div>
+        
+        <!-- Détail par phase (optionnel) -->
+        {% if phases %}
+        <div class="mt-4">
+            <h6><i class="fas fa-chart-pie me-2"></i>Répartition par phase</h6>
+            <div class="row">
+                {% for phase in phases %}
+                    {% with total=phase.total_depenses %}
+                        {% if total > 0 %}
+                        <div class="col-md-6 mb-2">
+                            <div class="d-flex justify-content-between">
+                                <span>{{ phase.nom_phase }}</span>
+                                <span>{{ total|floatformat:0 }} CDF</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-info" style="width: {% widthratio total budget_consomme 100 %}%;"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+
+<!-- ============================================ -->
+<!-- BOUTON RETOUR -->
+<!-- ============================================ -->
+<div class="row mt-4">
+    <div class="col-12">
+        <a href="{% url 'liste_projets' %}" class="btn-retour">
+            <i class="fas fa-arrow-left me-2"></i> Retour à la liste
+        </a>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- MODAL POUR AGRANDIR LES PHOTOS -->
+<!-- ============================================ -->
+<div id="imageModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; text-align: center; padding-top: 50px;">
+    <span onclick="closeModal()" style="position: absolute; top: 20px; right: 40px; color: white; font-size: 40px; cursor: pointer;">&times;</span>
+    <img id="modalImage" src="" style="max-width: 90%; max-height: 80%; margin-top: 5%; border-radius: 10px;">
+</div>
+
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion des étoiles pour la notation
+        const stars = document.querySelectorAll('.star-rating-input i');
+        const noteInput = document.getElementById('noteValue');
+        let currentNote = 0;
+        
+        if (stars.length > 0) {
+            stars.forEach(star => {
+                // Au clic
+                star.addEventListener('click', function() {
+                    currentNote = parseInt(this.dataset.value);
+                    noteInput.value = currentNote;
+                    updateStars(currentNote);
+                });
+                
+                // Au survol
+                star.addEventListener('mouseenter', function() {
+                    const value = parseInt(this.dataset.value);
+                    updateStars(value, true);
+                });
+                
+                // À la sortie
+                star.addEventListener('mouseleave', function() {
+                    updateStars(currentNote);
+                });
+            });
+        }
+        
+        function updateStars(note, isHover = false) {
+            stars.forEach(star => {
+                const starValue = parseInt(star.dataset.value);
+                if (starValue <= note) {
+                    star.classList.add('active');
+                    star.classList.remove('far');
+                    star.classList.add('fas');
+                } else {
+                    star.classList.remove('active');
+                    star.classList.remove('fas');
+                    star.classList.add('far');
+                }
+            });
+        }
+    });
+
+    //fonction pour modal
+    function openModal(imgSrc) {
+        document.getElementById('modalImage').src = imgSrc;
+        document.getElementById('imageModal').style.display = 'block';
+    }
+    
+    function closeModal() {
+        document.getElementById('imageModal').style.display = 'none';
+    }
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+</script>
+{% endblock %}

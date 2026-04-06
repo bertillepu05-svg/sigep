@@ -1,0 +1,275 @@
+    /* ===== STYLES GÉNÉRAUX ===== */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        background-color: #f4f7fc;
+        overflow-x: hidden;
+    }
+
+    .main-content {
+        margin-left: 16.66666667%;
+        padding: 30px 40px !important;
+        background-color: #f4f7fc;
+        min-height: 100vh;
+        width: 83.33333333%;
+    }
+
+    /* ===== CARTES PROJETS ===== */
+    .project-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .project-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(30,60,114,0.15);
+    }
+
+    .project-image {
+        height: 200px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .project-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+    }
+
+    .project-card:hover .project-image img {
+        transform: scale(1.05);
+    }
+
+    .project-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 5px 12px;
+        border-radius: 30px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+
+    .badge-avenir { background: #6c757d; color: white; }
+    .badge-cours { background: #27bfd4; color: white; }
+    .badge-termine { background: #28a745; color: white; }
+    .badge-annule { background: #6c757d; color: white; }
+    .badge-suspendu { background: #ffc107; color: #1e3c72; }
+
+    .project-content {
+        padding: 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .project-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1e3c72;
+        margin-bottom: 10px;
+        line-height: 1.4;
+    }
+
+    .project-description {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+        line-height: 1.5;
+        flex: 1;
+    }
+
+    .project-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 15px;
+        font-size: 0.85rem;
+    }
+
+    .project-meta span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: #6c757d;
+    }
+
+    .project-meta i {
+        color: #27bfd4;
+        width: 16px;
+    }
+
+    .progress-section {
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    .progress-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        margin-bottom: 5px;
+        color: #6c757d;
+    }
+
+    .progress {
+        height: 6px;
+        background: #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        background: linear-gradient(135deg, #1e3c72, #27bfd4);
+        border-radius: 10px;
+    }
+
+    .project-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 15px;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .btn-details {
+        background: linear-gradient(135deg, #1e3c72, #2a4a8a);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-details:hover {
+        transform: translateX(5px);
+        background: linear-gradient(135deg, #27bfd4, #1e3c72);
+        color: white;
+    }
+
+    .btn-follow {
+        background: none;
+        border: none;
+        color: #dc3545;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: all 0.3s;
+    }
+
+    .btn-follow:hover {
+        transform: scale(1.1);
+    }
+
+    .btn-follow.following {
+        color: #dc3545;
+    }
+
+    .btn-follow:not(.following) {
+        color: #6c757d;
+    }
+
+    /* ===== FILTRES ===== */
+    .filters-card {
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .filters-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1e3c72;
+        margin-bottom: 15px;
+    }
+
+    .filter-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .filter-btn {
+        padding: 8px 20px;
+        border-radius: 30px;
+        background: #f8f9fa;
+        color: #1e3c72;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+        border: 1px solid #e9ecef;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+        background: linear-gradient(135deg, #1e3c72, #2a4a8a);
+        color: white;
+        border-color: transparent;
+    }
+
+    /* ===== PAGINATION ===== */
+    .pagination {
+        margin-top: 30px;
+        justify-content: center;
+    }
+
+    .pagination .page-link {
+        color: #1e3c72;
+        border: none;
+        margin: 0 3px;
+        border-radius: 8px;
+        padding: 8px 15px;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #1e3c72;
+        color: white;
+    }
+
+    .pagination .page-link:hover {
+        background-color: #27bfd4;
+        color: white;
+    }
+
+    /* ===== MESSAGES ===== */
+    .alert-empty {
+        background: #f8f9fa;
+        border: 2px dashed #e9ecef;
+        border-radius: 20px;
+        padding: 60px;
+        text-align: center;
+    }
+
+    .alert-empty i {
+        font-size: 4rem;
+        color: #dee2e6;
+        margin-bottom: 20px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+        .main-content {
+            margin-left: 0;
+            width: 100%;
+            padding: 20px !important;
+        }
+    }

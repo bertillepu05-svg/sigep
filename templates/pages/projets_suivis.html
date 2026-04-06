@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SIGEP - Projets suivis{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static "/css/projets_suivis.css" %}">
+{% endblock %}
+
+{% block name %}Projets suivis{% endblock %}
+
+{% block content %}
+<!-- ============================================ -->
+<!-- LISTE DES PROJETS SUIVIS -->
+<!-- ============================================ -->
+<div class="row g-4">
+    {% if projets_suivis %}
+        {% for suivi in projets_suivis %}
+        <div class="col-xl-4 col-lg-6 col-md-6">
+            <div class="project-card" id="projet-{{ suivi.projet.id_projet }}">
+                <div class="project-image">
+                    {% if suivi.projet.photo %}
+                        <img src="{{ suivi.projet.photo.url }}" alt="{{ suivi.projet.titre }}">
+                    {% else %}
+                        <img src="{% static 'images/default-project.jpg' %}" alt="Image par défaut">
+                    {% endif %}
+                    <span class="project-status 
+                        {% if suivi.projet.statut == 'a_venir' %}status-avenir
+                        {% elif suivi.projet.statut == 'en_cours' %}status-cours
+                        {% elif suivi.projet.statut == 'termine' %}status-termine
+                        {% elif suivi.projet.statut == 'annule' %}status-annule
+                        {% else %}status-suspendu{% endif %}">
+                        {{ suivi.projet.get_statut_display }}
+                    </span>
+                </div>
+                <div class="project-content">
+                    <div class="project-title">
+                        <i class="fas 
+                            {% if 'construction' in suivi.projet.titre|lower %}fa-hard-hat
+                            {% elif 'école' in suivi.projet.titre|lower or 'education' in suivi.projet.titre|lower %}fa-graduation-cap
+                            {% elif 'hôpital' in suivi.projet.titre|lower or 'santé' in suivi.projet.titre|lower %}fa-hospital
+                            {% elif 'route' in suivi.projet.titre|lower %}fa-road
+                            {% else %}fa-project-diagram{% endif %}">
+                        </i>
+                        {{ suivi.projet.titre }}
+                    </div>
+                    <div class="project-description">
+                        {{ suivi.projet.description|truncatewords:25 }}
+                    </div>
+                    <div class="project-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-map-pin"></i>
+                            {{ suivi.projet.province|default:"Non spécifié" }}
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-calendar"></i>
+                            {% if suivi.projet.statut == 'a_venir' %}
+                                Début: {{ suivi.projet.date_debut|date:"d/m/Y" }}
+                            {% elif suivi.projet.statut == 'termine' %}
+                                Fin: {{ suivi.projet.date_fin_prevue|date:"d/m/Y" }}
+                            {% else %}
+                                Fin prévue: {{ suivi.projet.date_fin_prevue|date:"d/m/Y" }}
+                            {% endif %}
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-coins"></i>
+                            {{ suivi.projet.budget_previsionnel|floatformat:0 }} CDF
+                        </div>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-header">
+                            <span>Avancement</span>
+                            <span>{{ suivi.projet.avancement_moyen|default:0 }}%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: {{ suivi.projet.avancement_moyen|default:0 }}%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-footer">
+                        <a href="{% url 'details_projets' suivi.projet.id_projet %}" class="btn-outline-primary">
+                            <i class="fas fa-eye me-2"></i>Détails
+                        </a>
+                        <form method="post" action="{% url 'toggle_suivre' suivi.projet.id_projet %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger {% if est_suivi %}btn-following{% else %}btn-follow{% endif %}">
+                                <i class="fas fa-{% if est_suivi %}heart-broken{% else %}heart-broken{% endif %} me-2"></i>
+                                {% if est_suivi %}Ne plus suivre{% else %}Ne plus suivre{% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="empty-state">
+                <i class="fas fa-star"></i>
+                <h4>Aucun projet suivi</h4>
+                <p>Vous ne suivez aucun projet pour le moment.</p>
+                <a href="{% url 'liste_projets' %}" class="btn-outline-primary" style="display: inline-block;">
+                    <i class="fas fa-search me-2"></i>Découvrir des projets
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- ============================================ -->
+<!-- STATISTIQUES RAPIDES -->
+<!-- ============================================ -->
+{% if projets_suivis %}
+<div class="row mt-5">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-chart-line" style="font-size: 2rem; color: #27bfd4;"></i>
+                <h3 class="mt-2">{{ projets_suivis|length }}</h3>
+                <p class="text-muted">Projets suivis</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-play-circle" style="font-size: 2rem; color: #27bfd4;"></i>
+                <h3 class="mt-2">
+                    {% with en_cours=projets_suivis|dictsort:"projet.statut" %}
+                        {{ projets_suivis|dictsort:"projet.statut"|length }}
+                    {% endwith %}
+                </h3>
+                <p class="text-muted">En cours</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-check-circle" style="font-size: 2rem; color: #28a745;"></i>
+                <h3 class="mt-2">
+                    {% with termines=projets_suivis|dictsort:"projet.statut" %}
+                        {{ projets_suivis|dictsort:"projet.statut"|length }}
+                    {% endwith %}
+                </h3>
+                <p class="text-muted">Terminés</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-clock" style="font-size: 2rem; color: #ffc107;"></i>
+                <h3 class="mt-2">
+                    {% with a_venir=projets_suivis|dictsort:"projet.statut" %}
+                        {{ projets_suivis|dictsort:"projet.statut"|length }}
+                    {% endwith %}
+                </h3>
+                <p class="text-muted">À venir</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% block extra_js %}
+    <script src="{% static '/js/projets_suivis.js' %}"></script>
+{% endblock  %}
+
+{% endblock %}

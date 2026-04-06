@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SIGEP - Mes phases{% endblock %}
+
+{% block extra_css %}
+<style>
+    .phase-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: all 0.3s;
+    }
+    .phase-card:hover {
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    .phase-progress {
+        height: 8px;
+        border-radius: 10px;
+        background: #e9ecef;
+    }
+    .phase-progress-bar {
+        height: 100%;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #1e3c72, #27bfd4);
+    }
+    .badge-phase {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+    }
+    .badge-termine { background: #28a745; color: white; }
+    .badge-encours { background: #27bfd4; color: white; }
+    .badge-pascommence { background: #6c757d; color: white; }
+</style>
+{% endblock %}
+
+{% block name %}Mes phases - {{ entreprise.nom }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            Vous trouverez ici toutes les phases des projets assignés à votre entreprise.
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% if phases %}
+        {% for phase in phases %}
+        <div class="col-12">
+            <div class="phase-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5 class="mb-1">{{ phase.nom_phase }}</h5>
+                        <p class="text-muted small mb-2">
+                            <i class="fas fa-project-diagram me-1"></i>
+                            Projet : <strong>{{ phase.projet.titre }}</strong>
+                        </p>
+                        <p class="mb-2">{{ phase.description|default:"Pas de description" }}</p>
+                    </div>
+                    <span class="badge-phase 
+                        {% if phase.pourcentage_avancement >= 100 %}badge-termine
+                        {% elif phase.pourcentage_avancement > 0 %}badge-encours
+                        {% else %}badge-pascommence{% endif %}">
+                        {% if phase.pourcentage_avancement >= 100 %}Terminé
+                        {% elif phase.pourcentage_avancement > 0 %}En cours ({{ phase.pourcentage_avancement }}%)
+                        {% else %}Pas commencé{% endif %}
+                    </span>
+                </div>
+                
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Avancement</span>
+                        <span>{{ phase.pourcentage_avancement }}%</span>
+                    </div>
+                    <div class="phase-progress">
+                        <div class="phase-progress-bar" style="width: {{ phase.pourcentage_avancement }}%;"></div>
+                    </div>
+                </div>
+                
+                <div class="mt-3 d-flex justify-content-between align-items-center">
+                    <div class="small text-muted">
+                        <i class="fas fa-calendar-alt me-1"></i>
+                        {{ phase.date_debut|date:"d/m/Y" }}
+                        {% if phase.date_fin %} - {{ phase.date_fin|date:"d/m/Y" }}{% endif %}
+                    </div>
+                    <a href="{% url 'modifier_phase_entreprise' phase.id_phase %}" class="btn btn-sm btn-warning">
+                        <i class="fas fa-edit me-1"></i>Modifier
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12 text-center py-5">
+            <i class="fas fa-tasks fa-4x text-muted mb-3"></i>
+            <h4>Aucune phase</h4>
+            <p class="text-muted">Aucune phase n'a encore été ajoutée aux projets assignés.</p>
+            <a href="{% url 'projets_assignes' %}" class="btn btn-primary mt-3">
+                <i class="fas fa-arrow-left me-2"></i>Voir les projets
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

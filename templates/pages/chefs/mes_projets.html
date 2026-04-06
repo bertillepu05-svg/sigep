@@ -1,0 +1,350 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SIGEP - Mes projets{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Cartes projets */
+    .project-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .project-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(30,60,114,0.15);
+    }
+    .project-image {
+        height: 180px;
+        overflow: hidden;
+        position: relative;
+    }
+    .project-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+    }
+    .project-card:hover .project-image img {
+        transform: scale(1.05);
+    }
+    .project-status {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+    .status-a-venir { background: #6c757d; color: white; }
+    .status-en-cours { background: #27bfd4; color: white; }
+    .status-termine { background: #28a745; color: white; }
+    .status-annule { background: #6c757d; color: white; }
+    .status-suspendu { background: #ffc107; color: #1e3c72; }
+    
+    .project-content {
+        padding: 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .project-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1e3c72;
+        margin-bottom: 10px;
+    }
+    .project-description {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+        line-height: 1.5;
+        flex: 1;
+    }
+    .project-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 15px;
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    .project-meta i {
+        color: #27bfd4;
+        width: 16px;
+        margin-right: 5px;
+    }
+    .progress {
+        height: 6px;
+        border-radius: 10px;
+        background: #e9ecef;
+        margin: 10px 0;
+    }
+    .progress-bar {
+        background: linear-gradient(135deg, #1e3c72, #27bfd4);
+        border-radius: 10px;
+    }
+    .project-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding-top: 15px;
+        border-top: 1px solid #e9ecef;
+        margin-top: auto;
+    }
+    .btn-sm {
+        padding: 6px 15px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .btn-primary-sm {
+        background: #1e3c72;
+        color: white;
+    }
+    .btn-primary-sm:hover {
+        background: #27bfd4;
+        color: white;
+    }
+    .btn-warning-sm {
+        background: #ffc107;
+        color: #1e3c72;
+    }
+    .btn-warning-sm:hover {
+        background: #e0a800;
+    }
+    .btn-danger-sm {
+        background: #dc3545;
+        color: white;
+    }
+    .btn-danger-sm:hover {
+        background: #c82333;
+    }
+    .btn-success-sm {
+        background: #28a745;
+        color: white;
+    }
+    .btn-success-sm:hover {
+        background: #218838;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 60px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .empty-state i {
+        font-size: 4rem;
+        color: #dee2e6;
+        margin-bottom: 20px;
+    }
+    .filter-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 30px;
+    }
+    .filter-btn {
+        padding: 8px 20px;
+        border-radius: 30px;
+        background: white;
+        color: #1e3c72;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+        border: 1px solid #e9ecef;
+    }
+    .filter-btn:hover, .filter-btn.active {
+        background: linear-gradient(135deg, #1e3c72, #2a4a8a);
+        color: white;
+        border-color: transparent;
+    }
+    .stats-card {
+        background: white;
+        border-radius: 20px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .stats-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1e3c72;
+    }
+</style>
+{% endblock %}
+
+{% block name %}Mes projets (Ministère : {{ user.chef_projet.nom_ministere }}){% endblock %}
+
+{% block content %}
+<!-- Statistiques rapides -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ total_projets }}</div>
+            <div class="text-muted">Total projets</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ projets_en_cours }}</div>
+            <div class="text-muted">En cours</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-number">{{ projets_termines }}</div>
+            <div class="text-muted">Terminés</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <a href="{% url 'initialiser_projet' %}" class="btn btn-primary w-100">
+                <i class="fas fa-plus-circle me-2"></i>Nouveau projet
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filtres -->
+<div class="filter-buttons">
+    <a href="{% url 'mes_projets' %}" class="filter-btn {% if not statut_filtre %}active{% endif %}">
+        <i class="fas fa-list me-1"></i>Tous
+    </a>
+    <a href="?statut=a_venir" class="filter-btn {% if statut_filtre == 'a_venir' %}active{% endif %}">
+        <i class="fas fa-clock me-1"></i>À venir
+    </a>
+    <a href="?statut=en_cours" class="filter-btn {% if statut_filtre == 'en_cours' %}active{% endif %}">
+        <i class="fas fa-spinner me-1"></i>En cours
+    </a>
+    <a href="?statut=termine" class="filter-btn {% if statut_filtre == 'termine' %}active{% endif %}">
+        <i class="fas fa-check-circle me-1"></i>Terminés
+    </a>
+    <a href="?statut=annule" class="filter-btn {% if statut_filtre == 'annule' %}active{% endif %}">
+        <i class="fas fa-ban me-1"></i>Annulés
+    </a>
+</div>
+
+<!-- Liste des projets -->
+<div class="row">
+    {% if projets %}
+        {% for projet in projets %}
+        <div class="col-xl-4 col-lg-6 col-md-6 mb-4">
+            <div class="project-card">
+                <div class="project-image">
+                    {% if projet.photo %}
+                        <img src="{{ projet.photo.url }}" alt="{{ projet.titre }}">
+                    {% else %}
+                        <img src="{% static 'images/default-project.jpg' %}" alt="Image par défaut">
+                    {% endif %}
+                    <span class="project-status status-{{ projet.statut|slugify }}">
+                        {{ projet.get_statut_display }}
+                    </span>
+                </div>
+                <div class="project-content">
+                    <h5 class="project-title">{{ projet.titre }}</h5>
+                    <p class="project-description">{{ projet.description|truncatewords:25 }}</p>
+                    
+                    <div class="project-meta">
+                        <span><i class="fas fa-industry"></i>{{ projet.entreprise.nom|default:"Non assignée"|truncatechars:20 }}</span>
+                        <span><i class="fas fa-coins"></i>{{ projet.budget_previsionnel|floatformat:0 }} CDF</span>
+                        <span><i class="fas fa-calendar"></i>{{ projet.date_debut|date:"d/m/Y" }}</span>
+                    </div>
+                    
+                    <div class="progress">
+                        <div class="progress-bar" style="width: {{ projet.avancement_moyen|default:0 }}%;"></div>
+                    </div>
+                    <div class="d-flex justify-content-between small text-muted">
+                        <span>Avancement</span>
+                        <span>{{ projet.avancement_moyen|default:0 }}%</span>
+                    </div>
+                    
+                    <div class="project-footer">
+                        <a href="{% url 'details_projets' projet.id_projet %}" class="btn-sm btn-primary-sm">
+                            <i class="fas fa-eye"></i> Détails
+                        </a>
+                        {% if projet.statut != 'termine' and projet.statut != 'annule' %}
+                            <a href="{% url 'modifier_projet' projet.id_projet %}" class="btn-sm btn-warning-sm">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            <a href="{% url 'annuler_projet' projet.id_projet %}" class="btn-sm btn-danger-sm" 
+                               onclick="return confirm('Annuler ce projet ? Cette action peut être réversible.')">
+                                <i class="fas fa-ban"></i> Annuler
+                            </a>
+                        {% elif projet.statut == 'annule' %}
+                            <a href="{% url 'reactiver_projet' projet.id_projet %}" class="btn-sm btn-success-sm"
+                               onclick="return confirm('Réactiver ce projet ?')">
+                                <i class="fas fa-redo"></i> Réactiver
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="empty-state">
+                <i class="fas fa-folder-open"></i>
+                <h4>Aucun projet</h4>
+                <p class="text-muted">
+                    {% if statut_filtre %}
+                        Aucun projet avec ce statut.
+                    {% else %}
+                        Vous n'avez pas encore créé de projet.
+                    {% endif %}
+                </p>
+                <a href="{% url 'initialiser_projet' %}" class="btn btn-primary mt-3">
+                    <i class="fas fa-plus-circle me-2"></i>Créer mon premier projet
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Pagination -->
+{% if projets.has_other_pages %}
+<nav aria-label="Navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if projets.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ projets.previous_page_number }}{% if statut_filtre %}&statut={{ statut_filtre }}{% endif %}">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </li>
+        {% endif %}
+        
+        {% for num in projets.paginator.page_range %}
+            {% if projets.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > projets.number|add:'-3' and num < projets.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if statut_filtre %}&statut={{ statut_filtre }}{% endif %}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if projets.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ projets.next_page_number }}{% if statut_filtre %}&statut={{ statut_filtre }}{% endif %}">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

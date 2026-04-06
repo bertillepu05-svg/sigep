@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SIGEP - Gestion des employés{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        background: linear-gradient(135deg, #f8f9fa, #fff);
+        border-radius: 20px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(30,60,114,0.15);
+    }
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1e3c72;
+    }
+    .employee-table {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .employee-table th {
+        background: #1e3c72;
+        color: white;
+        padding: 15px;
+    }
+    .employee-table td {
+        padding: 12px 15px;
+        vertical-align: middle;
+    }
+    .employee-status-active {
+        color: #28a745;
+        font-weight: 600;
+    }
+    .employee-status-inactive {
+        color: #dc3545;
+        font-weight: 600;
+    }
+    .btn-sm {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+    }
+</style>
+{% endblock %}
+
+{% block name %}Gestion des employés - {{ entreprise.nom }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_employes }}</div>
+            <div class="text-muted">Employés</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-number">{{ employes_actifs }}</div>
+            <div class="text-muted">Actifs</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-number">{{ employes_inactifs }}</div>
+            <div class="text-muted">Inactifs</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <a href="{% url 'ajouter_employe' %}" class="btn btn-primary w-100">
+                <i class="fas fa-plus-circle me-2"></i>Ajouter un employé
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="employee-table">
+    <table class="table table-hover mb-0">
+        <thead>
+            <tr>
+                <th><i class="fas fa-user me-2"></i>Nom</th>
+                <th><i class="fas fa-envelope me-2"></i>Email</th>
+                <th><i class="fas fa-phone me-2"></i>Téléphone</th>
+                <th><i class="fas fa-briefcase me-2"></i>Profession</th>
+                <th><i class="fas fa-circle me-2"></i>Statut</th>
+                <th><i class="fas fa-cog me-2"></i>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employe in employes %}
+            <tr>
+                <td>
+                    <strong>{{ employe.get_full_name|default:employe.username }}</strong>
+                    <br><small class="text-muted">@{{ employe.username }}</small>
+                </td>
+                <td>{{ employe.email }}</td>
+                <td>{{ employe.profile.telephone|default:"—" }}</td>
+                <td>{{ employe.profile.profession|default:"—" }}</td>
+                <td>
+                    {% if employe.is_active %}
+                        <span class="employee-status-active"><i class="fas fa-check-circle"></i> Actif</span>
+                    {% else %}
+                        <span class="employee-status-inactive"><i class="fas fa-ban"></i> Inactif</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'modifier_employe' employe.id %}" class="btn btn-sm btn-warning">
+                        <i class="fas fa-edit"></i> Modifier
+                    </a>
+                    <a href="{% url 'desactiver_employe' employe.id %}" 
+                       class="btn btn-sm {% if employe.is_active %}btn-danger{% else %}btn-success{% endif %}"
+                       onclick="return confirm('Confirmer la {% if employe.is_active %}désactivation{% else %}réactivation{% endif %} ?')">
+                        <i class="fas {% if employe.is_active %}fa-ban{% else %}fa-check-circle{% endif %}"></i>
+                        {% if employe.is_active %}Désactiver{% else %}Réactiver{% endif %}
+                    </a>
+                    <a href="{% url 'supprimer_employe' employe.id %}" 
+                       class="btn btn-sm btn-dark"
+                       onclick="return confirm('Supprimer définitivement {{ employe.username }} ? Cette action est irréversible.')">
+                        <i class="fas fa-trash"></i> Supprimer
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center py-5">
+                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                    <p>Aucun employé pour le moment.</p>
+                    <a href="{% url 'ajouter_employe' %}" class="btn btn-primary">Ajouter un employé</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

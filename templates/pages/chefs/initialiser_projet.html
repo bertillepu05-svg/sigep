@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SIGEP - Initialiser un projet{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        font-weight: 600;
+        color: #1e3c72;
+        margin-bottom: 8px;
+    }
+    .form-group label i {
+        color: #27bfd4;
+        margin-right: 8px;
+    }
+    .form-control, .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 12px 15px;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #27bfd4;
+        box-shadow: 0 0 0 3px rgba(39,191,212,0.1);
+    }
+    .is-invalid {
+        border-color: #dc3545;
+    }
+    .error-message {
+        color: #dc3545;
+        font-size: 0.85rem;
+        margin-top: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block name %}Initialiser un nouveau projet{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="form-card">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="{{ form.titre.id_for_label }}">
+                                <i class="fas fa-heading"></i>Titre du projet *
+                            </label>
+                            {{ form.titre }}
+                            {% if form.titre.errors %}
+                                <div class="error-message">{{ form.titre.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.description.id_for_label }}">
+                        <i class="fas fa-align-left"></i>Description *
+                    </label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <div class="error-message">{{ form.description.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.domaine_activite.id_for_label }}">
+                                <i class="fas fa-tag"></i>Domaine d'activité *
+                            </label>
+                            {{ form.domaine_activite }}
+                            {% if form.domaine_activite.errors %}
+                                <div class="error-message">{{ form.domaine_activite.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.province.id_for_label }}">
+                                <i class="fas fa-map-marker-alt"></i>Commune *
+                            </label>
+                            {{ form.province }}
+                            {% if form.province.errors %}
+                                <div class="error-message">{{ form.province.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.budget_previsionnel.id_for_label }}">
+                                <i class="fas fa-coins"></i>Budget prévisionnel (CDF) *
+                            </label>
+                            {{ form.budget_previsionnel }}
+                            {% if form.budget_previsionnel.errors %}
+                                <div class="error-message">{{ form.budget_previsionnel.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.statut.id_for_label }}">
+                                <i class="fas fa-chart-line"></i>Statut initial *
+                            </label>
+                            {{ form.statut }}
+                            {% if form.statut.errors %}
+                                <div class="error-message">{{ form.statut.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.date_debut.id_for_label }}">
+                                <i class="fas fa-calendar-alt"></i>Date de début *
+                            </label>
+                            {{ form.date_debut }}
+                            {% if form.date_debut.errors %}
+                                <div class="error-message">{{ form.date_debut.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.date_fin_prevue.id_for_label }}">
+                                <i class="fas fa-calendar-check"></i>Date de fin prévue *
+                            </label>
+                            {{ form.date_fin_prevue }}
+                            {% if form.date_fin_prevue.errors %}
+                                <div class="error-message">{{ form.date_fin_prevue.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.chef_projet.id_for_label }}">
+                                <i class="fas fa-building"></i>Ministère responsable *
+                            </label>
+                            {{ form.chef_projet }}
+                            {% if form.chef_projet.errors %}
+                                <div class="error-message">{{ form.chef_projet.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.entreprise.id_for_label }}">
+                                <i class="fas fa-industry"></i>Entreprise exécutante *
+                            </label>
+                            {{ form.entreprise }}
+                            {% if form.entreprise.errors %}
+                                <div class="error-message">{{ form.entreprise.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.photo.id_for_label }}">
+                        <i class="fas fa-camera"></i>Photo du projet
+                    </label>
+                    {{ form.photo }}
+                    {% if form.photo.errors %}
+                        <div class="error-message">{{ form.photo.errors|join:", " }}</div>
+                    {% endif %}
+                    <small class="text-muted">Format JPG, PNG. Taille max 2 Mo</small>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'mes_projets' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Créer le projet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

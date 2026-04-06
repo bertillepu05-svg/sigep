@@ -1,0 +1,127 @@
+<!-- Bouton menu mobile -->
+<div class="menu-toggle" id="menuToggle">
+    <i class="fas fa-bars"></i>
+</div>
+
+<!-- Overlay (fond sombre) -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Menu fixed -->
+<div class="sidebar-fixed" id="sidebar">
+    <!-- Bouton fermer (mobile) -->
+    <div class="sidebar-close" id="sidebarClose">
+        <i class="fas fa-times"></i>
+    </div>
+
+    <div class="icone">
+        SIGEP
+        <br>
+        {% if user.is_authenticated %}
+            {% if user.is_superuser %}
+                <span class="admin-badge">Admin</span>
+            {% elif user.profile.role == 'Chef' %}
+                <span class="role-badge">Chef</span>
+            {% elif user.profile.role == 'entreprise' %}
+                <span class="role-badge">Entreprise : {{user.profile.entreprise.nom}} </span>
+            {% endif %}
+        {% endif %}
+    </div>
+    
+    <div class="pages">
+        <!-- LIENS TOUJOURS VISIBLES -->
+        <a href="/" class="{% if request.path == '/' %}active{% endif %}">
+            <i class="fas fa-home"></i> Accueil
+        </a>
+        
+        <a href="/projets/" class="{% if request.path == '/projets/' %}active{% endif %}">
+            <i class="fas fa-list"></i> Tous les projets
+        </a>
+        
+        <!-- LIENS POUR CONNECTÉS -->
+        {% if user.is_authenticated %}
+            {% if user.profile.role == 'observateur' %}
+            <a href="/projets/suivis/" class="{% if '/projets/suivis' in request.path %}active{% endif %}">
+                <i class="fas fa-star"></i> Projets suivis
+            </a>
+            {% endif %}
+            
+            <!-- CHEF DE PROJET -->
+            {% if user.profile.role == 'chef' or user.is_superuser %}
+                <a href="/chef/projets/" class="{% if request.path == '/projets/mes-projets/' %}active{% endif %}">
+                    <i class="fas fa-tasks"></i> Mes projets
+                </a>
+                <a href="/chef/projets/initialiser/" class="{% if request.path == '/projets/initialiser/' %}active{% endif %}">
+                    <i class="fas fa-plus-circle"></i> Initialiser projet
+                </a>
+            {% endif %}
+            
+            <!-- ENTREPRISE -->
+           {% if user.profile.role == 'entreprise' %}
+                {% if user.entreprise_representee %}
+                    {# C'est le REPRÉSENTANT #}
+                    <div class="dropdown-container">
+                        <a href="#" class="dropdown-toggle-btn">
+                            <i class="fas fa-building"></i> Mon_entreprise
+                            <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        </a>
+                        <div class="dropdown-menu-sidebar">
+                            <a href="{% url 'gestion_employes' %}" class="dropdown-item">
+                                <i class="fas fa-users"></i> Gérer employés
+                            </a>
+                            <a href="{% url 'projets_assignes' %}" class="dropdown-item">
+                                <i class="fas fa-briefcase"></i> Projets assignés
+                            </a>
+                        </div>
+                    </div>
+                    <a href="{% url 'mes_phases' %}" class="{% if '/entreprise/phases/' in request.path %}active{% endif %}">
+                        <i class="fas fa-tasks"></i> Nos phases
+                    </a>
+                {% else %}
+                    {# C'est un EMPLOYÉ #}
+                    <a href="{% url 'projets_assignes' %}" class="{% if '/entreprise/projets/' in request.path %}active{% endif %}">
+                        <i class="fas fa-briefcase"></i> Projets assignés
+                    </a>
+                    <a href="{% url 'mes_phases' %}" class="{% if '/entreprise/phases/' in request.path %}active{% endif %}">
+                        <i class="fas fa-tasks"></i> Nos phases
+                    </a>
+                {% endif %}
+            {% endif %}
+            
+            <!-- MENU COMPTE (pour tous les connectés) -->
+            <div class="dropdown-container">
+                <a href="#" class="dropdown-toggle-btn">
+                    <i class="fas fa-user-circle"></i> Mon compte<i class="fas fa-chevron-down dropdown-arrow"></i>
+                </a>
+                <div class="dropdown-menu-sidebar">
+                    <a href="/profil/" class="dropdown-item">
+                        <i class="fas fa-id-card"></i> Voir profil
+                    </a>
+                    <a href="/profil/modifier/" class="dropdown-item">
+                        <i class="fas fa-edit"></i> Modifier profil
+                    </a>
+                    
+                    {% if user.is_superuser %}
+                        <div class="dropdown-divider"></div>
+                        <a href="/admin/" class="dropdown-item admin-item">
+                            <i class="fas fa-cog"></i> Administration
+                        </a>
+                    {% endif %}
+                    
+                    <div class="dropdown-divider"></div>
+                    <a href="/deconnexion/" class="dropdown-item text-danger">
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    </a>
+                </div>
+            </div>
+            
+        {% else %}
+            <!-- NON CONNECTÉ -->
+            <a href="/connexion/" class="{% if request.path == '/connexion/' %}active{% endif %}">
+                <i class="fas fa-sign-in-alt"></i> Connexion
+            </a>
+            <a href="/inscription/" class="{% if request.path == '/inscription/' %}active{% endif %}">
+                <i class="fas fa-user-plus"></i> Inscription
+            </a>
+        {% endif %}
+    </div>
+</div>

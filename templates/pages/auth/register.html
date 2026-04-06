@@ -1,0 +1,247 @@
+{% extends 'base_auth.html' %}
+{% load static %} 
+
+{% block title %}Inscription - SIGEP{% endblock %} 
+
+{% block extra_css %}
+        <link rel="stylesheet" href="{% static "/css/auth/register.css" %}">
+{% endblock %}
+
+{% block content %}
+
+    {# Formulaire #}
+    <form method="post" novalidate class="auth-form">
+        {% csrf_token %}
+
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <h4>Erreurs détectées :</h4>
+                <ul>
+                    {% for field, errors in form.errors.items %}
+                        <li><strong>{{ field }}:</strong> {{ errors|join:", " }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        
+        {# Afficher les erreurs générales du formulaire #}
+        {% if form.non_field_errors %}
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+        
+        {# Section Informations de connexion #}
+        <div class="form-section">
+            <h3>
+                <i class="fas fa-lock me-2"></i>
+                Informations de connexion
+            </h3>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="{{ form.username.id_for_label }}">
+                            <i class="fas fa-user me-2"></i>
+                            {{ form.username.label }}
+                        </label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="errorlist">{{ form.username.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.password1.id_for_label }}">
+                            <i class="fas fa-key me-2"></i>
+                            {{ form.password1.label }}
+                        </label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
+                            <div class="errorlist">{{ form.password1.errors }}</div>
+                        {% endif %}
+                        <div class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            Minimum 8 caractères, pas que des chiffres
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.password2.id_for_label }}">
+                            <i class="fas fa-check-circle me-2"></i>
+                            {{ form.password2.label }}
+                        </label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                            <div class="errorlist">{{ form.password2.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {# Section Informations personnelles #}
+        <div class="form-section">
+            <h3>
+                <i class="fas fa-user-circle me-2"></i>
+                Informations personnelles
+            </h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.nom.id_for_label }}">
+                            <i class="fas fa-signature me-2"></i>
+                            {{ form.nom.label }}
+                        </label>
+                        {{ form.nom }}
+                        {% if form.nom.errors %}
+                            <div class="errorlist">{{ form.nom.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.prenom.id_for_label }}">
+                            <i class="fas fa-signature me-2"></i>
+                            {{ form.prenom.label }}
+                        </label>
+                        {{ form.prenom }}
+                        {% if form.prenom.errors %}
+                            <div class="errorlist">{{ form.prenom.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.email.id_for_label }}">
+                            <i class="fas fa-envelope me-2"></i>
+                            {{ form.email.label }}
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="errorlist">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.telephone.id_for_label }}">
+                            <i class="fas fa-phone me-2"></i>
+                            {{ form.telephone.label }}
+                        </label>
+                        {{ form.telephone }}
+                        {% if form.telephone.errors %}
+                            <div class="errorlist">{{ form.telephone.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.sexe.id_for_label }}">
+                            <i class="fas fa-venus-mars me-2"></i>
+                            {{ form.sexe.label }}
+                        </label>
+                        {{ form.sexe }}
+                        {% if form.sexe.errors %}
+                            <div class="errorlist">{{ form.sexe.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.profession.id_for_label }}">
+                            <i class="fas fa-briefcase me-2"></i>
+                            {{ form.profession.label }}
+                        </label>
+                        {{ form.profession }}
+                        {% if form.profession.errors %}
+                            <div class="errorlist">{{ form.profession.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {# Section Adresse #}
+        <div class="form-section">
+            <h3>
+                <i class="fas fa-map-marker-alt me-2"></i>
+                Adresse
+            </h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.commune.id_for_label }}">
+                            <i class="fas fa-city me-2"></i>
+                            {{ form.commune.label }}
+                        </label>
+                        {{ form.commune }}
+                        {% if form.commune.errors %}
+                            <div class="errorlist">{{ form.commune.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.quartier.id_for_label }}">
+                            <i class="fas fa-map me-2"></i>
+                            {{ form.quartier.label }}
+                        </label>
+                        {{ form.quartier }}
+                        {% if form.quartier.errors %}
+                            <div class="errorlist">{{ form.quartier.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.avenue.id_for_label }}">
+                            <i class="fas fa-road me-2"></i>
+                            {{ form.avenue.label }}
+                        </label>
+                        {{ form.avenue }}
+                        {% if form.avenue.errors %}
+                            <div class="errorlist">{{ form.avenue.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            {# Date d'inscription (cachée) #}
+            {{ form.date_inscription.as_hidden }}
+        </div>
+        
+        {# Bouton de soumission #}
+        <button type="submit" class="auth-btn">
+            <i class="fas fa-user-plus me-2"></i>
+            S'inscrire
+        </button>
+
+        <div class="auth-links">
+            <p>
+                <i class="fas fa-question-circle me-1"></i>
+                Déjà un compte ? 
+                <a href="{% url 'login' %}">
+                    Connectez-vous ici <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </p>
+        </div>
+    </form>
+{% endblock %}

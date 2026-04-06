@@ -1,0 +1,371 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SIGEP - Modifier mon profil{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static "/css/auth/modif_profil1.css" %}">
+{% endblock %}
+
+{% block name %}Modifier mon profil{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data" id="editProfileForm">
+    {% csrf_token %}
+    
+    <!-- ============================================ -->
+    <!-- PHOTO DE PROFIL -->
+    <!-- ============================================ -->
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-camera"></i>
+            Photo de profil
+        </div>
+        <div class="card-body">
+            <div class="photo-section">
+                {% if user.profile.photo %}
+                    <img src="{{ user.profile.photo.url }}" alt="Photo de profil" class="current-photo" id="profilePhoto">
+                {% else %}
+                    <img src="{% static 'images/profile/default-avatar.jpg' %}" alt="Photo de profil" class="current-photo" id="profilePhoto">
+                {% endif %}
+                
+                <div class="photo-upload">
+                    <input type="file" id="photoInput" name="photo" accept="image/*" onchange="previewImage(event)">
+                    <label for="photoInput">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        Changer la photo
+                    </label>
+                </div>
+                <p class="photo-hint">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Formats acceptés : JPG, PNG. Taille max : 2 Mo
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- INFORMATIONS PERSONNELLES (TOUS LES RÔLES) -->
+    <!-- ============================================ -->
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-id-card"></i>
+            Informations personnelles
+        </div>
+        <div class="card-body">
+            <!-- Identité -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-user-circle"></i>
+                    Identité
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i>Prénom *
+                        </label>
+                        <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}" required>
+                        <div class="invalid-feedback">Le prénom est requis</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i>Nom *
+                        </label>
+                        <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}" required>
+                        <div class="invalid-feedback">Le nom est requis</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-venus-mars"></i>Genre
+                        </label>
+                        <select name="sexe" class="form-select">
+                            <option value="">Non précisé</option>
+                            <option value="M" {% if user.profile.sexe == 'M' %}selected{% endif %}>Masculin</option>
+                            <option value="F" {% if user.profile.sexe == 'F' %}selected{% endif %}>Féminin</option>
+                            <option value="A" {% if user.profile.sexe == 'A' %}selected{% endif %}>Autre</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-briefcase"></i>Profession
+                        </label>
+                        <input type="text" name="profession" class="form-control" value="{{ user.profile.profession|default:'' }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coordonnées -->
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-address-card"></i>
+                    Coordonnées
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-envelope"></i>Email *
+                        </label>
+                        <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+                        <div class="invalid-feedback">Email invalide</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-phone-alt"></i>Téléphone
+                        </label>
+                        <input type="tel" name="telephone" class="form-control" value="{{ user.profile.telephone|default:'' }}">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-city"></i>Commune
+                        </label>
+                        <select name="commune" class="form-select">
+                            <option value="">Sélectionnez</option>
+                            <option value="kinshasa" {% if user.profile.commune == 'kinshasa' %}selected{% endif %}>Kinshasa</option>
+                            <option value="lubumbashi" {% if user.profile.commune == 'lubumbashi' %}selected{% endif %}>Lubumbashi</option>
+                            <option value="mbujimayi" {% if user.profile.commune == 'mbujimayi' %}selected{% endif %}>Mbuji-Mayi</option>
+                            <option value="kananga" {% if user.profile.commune == 'kananga' %}selected{% endif %}>Kananga</option>
+                            <option value="kisangani" {% if user.profile.commune == 'kisangani' %}selected{% endif %}>Kisangani</option>
+                            <option value="goma" {% if user.profile.commune == 'goma' %}selected{% endif %}>Goma</option>
+                            <option value="bukavu" {% if user.profile.commune == 'bukavu' %}selected{% endif %}>Bukavu</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-map"></i>Quartier
+                        </label>
+                        <input type="text" name="quartier" class="form-control" value="{{ user.profile.quartier|default:'' }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-road"></i>Avenue / Rue
+                        </label>
+                        <input type="text" name="avenue" class="form-control" value="{{ user.profile.avenue|default:'' }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECTION SPÉCIFIQUE CHEF DE PROJET -->
+    <!-- ============================================ -->
+    {% if user.profile.role == 'chef' and user.chef_projet %}
+    <div class="card">
+        <div class="card-header" style="background: linear-gradient(135deg, #1e3c72, #2a4a8a);">
+            <i class="fas fa-building"></i>
+            Informations du ministère
+        </div>
+        <div class="card-body">
+            <div class="alert-info-custom">
+                <i class="fas fa-info-circle"></i>
+                Ces informations sont gérées par l'administrateur. Pour toute modification, veuillez contacter l'administration.
+            </div>
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-landmark"></i>Ministère
+                    </label>
+                    <input type="text" class="form-control" value="{{ user.chef_projet.nom_ministere }}" disabled>
+                    <small class="text-muted">Contactez l'admin pour modifier ces informations</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ============================================ -->
+    <!-- SECTION SPÉCIFIQUE REPRÉSENTANT D'ENTREPRISE -->
+    <!-- ============================================ -->
+    {% if user.entreprise_representee %}
+    <div class="card">
+        <div class="card-header" style="background: linear-gradient(135deg, #28a745, #20c997);">
+            <i class="fas fa-industry"></i>
+            Mon entreprise : {{ user.entreprise_representee.nom }}
+        </div>
+        <div class="card-body">
+            <div class="alert-info-custom" style="background: #d4edda; border-left-color: #28a745;">
+                <i class="fas fa-info-circle"></i>
+                En tant que représentant, vous pouvez modifier les informations de votre entreprise.
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-building"></i>Nom de l'entreprise
+                    </label>
+                    <input type="text" name="entreprise_nom" class="form-control" value="{{ user.entreprise_representee.nom }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-envelope"></i>Email
+                    </label>
+                    <input type="email" name="entreprise_email" class="form-control" value="{{ user.entreprise_representee.email }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-phone"></i>Téléphone
+                    </label>
+                    <input type="tel" name="entreprise_telephone" class="form-control" value="{{ user.entreprise_representee.telephone }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-industry"></i>Domaine d'activité
+                    </label>
+                    <input type="text" name="entreprise_domaine" class="form-control" value="{{ user.entreprise_representee.domaine_activite }}">
+                </div>
+                <div class="col-md-12 mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-map-marker-alt"></i>Adresse
+                    </label>
+                    <textarea name="entreprise_adresse" class="form-control" rows="2">{{ user.entreprise_representee.adresse }}</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ============================================ -->
+    <!-- SECTION SPÉCIFIQUE EMPLOYÉ D'ENTREPRISE -->
+    <!-- ============================================ -->
+    {% if user.profile.role == 'entreprise' and user.profile.est_employe and user.profile.entreprise %}
+    <div class="card">
+        <div class="card-header" style="background: linear-gradient(135deg, #17a2b8, #27bfd4);">
+            <i class="fas fa-user-tie"></i>
+            Mon entreprise : {{ user.profile.entreprise.nom }}
+        </div>
+        <div class="card-body">
+            <div class="alert-info-custom">
+                <i class="fas fa-info-circle"></i>
+                Vous êtes un employé de cette entreprise. Pour modifier les informations de l'entreprise, contactez votre représentant.
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-envelope"></i>Email entreprise
+                    </label>
+                    <input type="text" class="form-control" value="{{ user.profile.entreprise.email }}" disabled>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-phone"></i>Téléphone
+                    </label>
+                    <input type="text" class="form-control" value="{{ user.profile.entreprise.telephone }}" disabled>
+                </div>
+                <div class="col-md-12 mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-user"></i>Ajouté par
+                    </label>
+                    <input type="text" class="form-control" value="{{ user.profile.ajoute_par.get_full_name|default:"Non renseigné"  }}" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ============================================ -->
+    <!-- SÉCURITÉ ET MOT DE PASSE -->
+    <!-- ============================================ -->
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-lock"></i>
+            Sécurité et confidentialité
+        </div>
+        <div class="card-body">
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fas fa-key"></i>
+                    Changer le mot de passe
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Mot de passe actuel</label>
+                        <input type="password" name="old_password" class="form-control" placeholder="Entrez votre mot de passe actuel">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nouveau mot de passe</label>
+                        <input type="password" name="new_password1" class="form-control" placeholder="Minimum 8 caractères">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Confirmer le nouveau mot de passe</label>
+                        <input type="password" name="new_password2" class="form-control" placeholder="Confirmez votre mot de passe">
+                    </div>
+                </div>
+                <small class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Laissez vide si vous ne souhaitez pas changer votre mot de passe
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- BOUTONS D'ACTION -->
+    <!-- ============================================ -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <button type="submit" class="btn btn-primary btn-action">
+                <i class="fas fa-save"></i> Enregistrer les modifications
+            </button>
+            <a href="{% url 'profil' %}" class="btn btn-secondary btn-action ms-2">
+                <i class="fas fa-times"></i> Annuler
+            </a>
+        </div>
+        
+        {% if user.profile.role != 'admin' %}
+        <button type="button" class="btn btn-danger btn-action" onclick="confirmDelete()">
+            <i class="fas fa-trash-alt"></i> Supprimer mon compte
+        </button>
+        {% endif %}
+    </div>
+</form>
+
+<!-- Modal de confirmation suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px;">
+            <div class="modal-header" style="background: #fee2e2; border-bottom: 2px solid #dc2626;">
+                <h5 class="modal-title" style="color: #dc2626;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Confirmation
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <i class="fas fa-trash-alt" style="font-size: 4rem; color: #dc2626; margin-bottom: 20px;"></i>
+                <h5 style="color: #1e3c72; margin-bottom: 15px;">Supprimer votre compte ?</h5>
+                <p class="text-muted">
+                    Cette action est irréversible. Toutes vos données personnelles 
+                    et votre historique d'activité seront définitivement supprimés.
+                </p>
+                <p class="text-danger mt-3">
+                    <i class="fas fa-exclamation-circle me-1"></i>
+                    Cette action est définitive.
+                </p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center gap-3 pb-4">
+                <button type="button" class="btn btn-secondary" style="padding: 10px 30px;" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Annuler
+                </button>
+                <form action="{% url 'supprimer_compte' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" style="padding: 10px 30px;">
+                        <i class="fas fa-trash-alt me-2"></i>Supprimer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+    
+{% block extra_js %}
+    <script src="{% static '/js/auth/modif_profil.js' %}"></script>
+{% endblock  %}
+
+

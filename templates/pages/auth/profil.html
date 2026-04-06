@@ -1,0 +1,373 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SIGEP - Mon profil{% endblock %}
+
+{% block extra_css %}
+     <link rel="stylesheet" href="{% static "/css/auth/profil.css" %}">
+{% endblock %}
+
+{% block name %}Mon compte{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Colonne gauche - Photo et infos principales -->
+    <div class="col-xl-4 col-lg-5 mb-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <!-- Photo de profil -->
+                <div class="profile-avatar">
+                    {% if user.profile.photo %}
+                        <img src="{{ user.profile.photo.url }}" alt="Photo de profil">
+                    {% else %}
+                        <img src="{% static 'images/profile/user-1.jpg' %}" alt="Photo de profil">
+                    {% endif %}
+                </div>
+                
+                <div class="profile-name">
+                    <h3>{{ user.get_full_name|default:user.username }}</h3>
+                    <p>
+                        <i class="fas fa-map-marker-alt me-2" style="color: #27bfd4;"></i>
+                        {{ user.profile.commune|default:"Non renseignée" }}, 
+                        {{ user.profile.quartier|default:"RDC" }}
+                    </p>
+                </div>
+
+                <!-- Badge selon le rôle -->
+                <div class="profile-badge 
+                    {% if user.profile.role == 'chef' %}role-badge-chef
+                    {% elif user.profile.role == 'entreprise' %}role-badge-entreprise
+                    {% elif user.profile.role == 'observateur' %}role-badge-observateur
+                    {% endif %}">
+                    <i class="fas 
+                        {% if user.profile.role == 'chef' %}fa-building
+                        {% elif user.profile.role == 'entreprise' %}fa-industry
+                        {% elif user.profile.role == 'observateur' %}fa-user
+                        {% endif %}"></i>
+                    {{ user.profile.get_role_display }}
+                    {% if user.profile.est_employe %}
+                        <span class="ms-1">(Employé)</span>
+                    {% endif %}
+                </div>
+
+                <div class="mt-3">
+                    <a href="{% url 'modifier_profil' %}" class="btn-edit">
+                        <i class="fas fa-edit"></i> Modifier mon profil
+                    </a>
+                </div>
+
+                <!-- Statistiques selon le rôle -->
+                <div class="row mt-4">
+                    {% if user.profile.role == 'observateur' %}
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="width: 50px; height: 50px; font-size: 1.2rem;">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <div class="stat-number" style="font-size: 1.5rem;">{{ stats.projets_suivis|default:0 }}</div>
+                                <div class="stat-label">Projets suivis</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="width: 50px; height: 50px; font-size: 1.2rem;">
+                                    <i class="fas fa-comment"></i>
+                                </div>
+                                <div class="stat-number" style="font-size: 1.5rem;">{{ stats.commentaires|default:0 }}</div>
+                                <div class="stat-label">Commentaires</div>
+                            </div>
+                        </div>
+                    {% elif user.profile.role == 'chef' %}
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="width: 50px; height: 50px; font-size: 1.2rem;">
+                                    <i class="fas fa-project-diagram"></i>
+                                </div>
+                                <div class="stat-number" style="font-size: 1.5rem;">{{ stats.projets_crees|default:0 }}</div>
+                                <div class="stat-label">Projets créés</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="width: 50px; height: 50px; font-size: 1.2rem;">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <div class="stat-number" style="font-size: 1rem;">{{ user.chef_projet.nom_ministere|default:"Ministère" }}</div>
+                                <div class="stat-label">Ministère</div>
+                            </div>
+                        </div>
+                    {% elif user.profile.role == 'entreprise' %}
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="width: 50px; height: 50px; font-size: 1.2rem;">
+                                    <i class="fas fa-briefcase"></i>
+                                </div>
+                                <div class="stat-number" style="font-size: 1.5rem;">{{ stats.projets_assignes|default:0 }}</div>
+                                <div class="stat-label">Projets assignés</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="width: 50px; height: 50px; font-size: 1.2rem;">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="stat-number" style="font-size: 1.5rem;">{{ stats.employes|default:0 }}</div>
+                                <div class="stat-label">Employés</div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Colonne droite - Informations détaillées -->
+    <div class="col-xl-8 col-lg-7">
+        <!-- Carte informations personnelles -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-id-card"></i>
+                Informations personnelles
+            </div>
+            <div class="card-body">
+                <ul class="info-list">
+                    <li class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Nom complet</div>
+                            <div class="info-value">{{ user.get_full_name|default:user.username }}</div>
+                        </div>
+                    </li>
+
+                    <li class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Adresse email</div>
+                            <div class="info-value">{{ user.email }}</div>
+                        </div>
+                    </li>
+
+                    <li class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Téléphone</div>
+                            <div class="info-value">{{ user.profile.telephone|default:"Non renseigné" }}</div>
+                        </div>
+                    </li>
+
+                    <li class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Date d'inscription</div>
+                            <div class="info-value">{{ user.profile.date_inscription|date:"d F Y" }}</div>
+                        </div>
+                    </li>
+
+                    <li class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-venus-mars"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Genre</div>
+                            <div class="info-value">{{ user.profile.get_sexe_display|default:"Non renseigné" }}</div>
+                        </div>
+                    </li>
+
+                    <li class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-map-pin"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Adresse</div>
+                            <div class="info-value">
+                                {{ user.profile.avenue|default:"" }}
+                                {% if user.profile.quartier %}, {{ user.profile.quartier }}{% endif %}
+                                {% if user.profile.commune %}, {{ user.profile.commune }}{% endif %}
+                                {% if not user.profile.avenue and not user.profile.quartier %}Non renseignée{% endif %}
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Profession</div>
+                            <div class="info-value">{{ user.profile.profession|default:"Non renseignée" }}</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mt-4">
+        <!-- Carte selon le rôle -->
+        {% if user.profile.role == 'observateur' and stats.projets_suivis > 0 %}
+        <!-- Projets suivis -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-star"></i>
+                Mes projets suivis
+            </div>
+            <div class="card-body">
+                {% for suivi in projets_suivis %}
+                <div class="projet-item">
+                    <div class="projet-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <div class="projet-content">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="projet-title">{{ suivi.projet.titre }}</span>
+                            <span class="projet-statut {{ suivi.projet.statut|slugify }}">
+                                {{ suivi.projet.get_statut_display }}
+                            </span>
+                        </div>
+                        <div class="projet-progress">
+                            <div class="projet-progress-bar" style="width: {{ suivi.projet.avancement_moyen|default:0 }}%;"></div>
+                        </div>
+                        <small class="text-muted">Suivi depuis le {{ suivi.date_suivi|date:"d/m/Y" }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="text-center mt-3">
+                    <a href="{% url 'projets_suivis' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-eye"></i> Voir tous mes suivis
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if user.profile.role == 'chef' and stats.projets_crees > 0 %}
+        <!-- Mes projets créés CHEF -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-tasks"></i>
+                Mes projets (Ministère)
+            </div>
+            <div class="card-body">
+                {% for projet in projets_crees|slice:":5" %}
+                <div class="projet-item">
+                    <div class="projet-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <div class="projet-content">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="projet-title">{{ projet.titre }}</span>
+                            <span class="projet-statut {{ projet.statut|slugify }}">
+                                {{ projet.get_statut_display }}
+                            </span>
+                        </div>
+                        <div class="projet-progress">
+                            <div class="projet-progress-bar" style="width: {{ projet.avancement_moyen|default:0 }}%;"></div>
+                        </div>
+                        <small class="text-muted">
+                            <i class="fas fa-building me-1"></i>{{ projet.entreprise.nom|default:"Entreprise non assignée" }}
+                        </small>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="text-center mt-3">
+                    <a href="{% url 'mes_projets' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-eye"></i> Voir tous mes projets
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if user.profile.role == 'entreprise' and user.entreprise_representee %}
+        <!-- Section représentant -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-building"></i>
+                Mon entreprise : {{ user.entreprise_representee.nom }}
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong><i class="fas fa-envelope"></i> Email:</strong> {{ user.entreprise_representee.email }}</p>
+                        <p><strong><i class="fas fa-phone"></i> Téléphone:</strong> {{ user.entreprise_representee.telephone }}</p>
+                        <p><strong><i class="fas fa-industry"></i> Domaine:</strong> {{ user.entreprise_representee.domaine_activite }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong><i class="fas fa-map-marker-alt"></i> Adresse:</strong> {{ user.entreprise_representee.adresse }}</p>
+                        <p><strong><i class="fas fa-users"></i> Employés:</strong> {{ stats.employes|default:0 }}</p>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{% url 'gestion_employes' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-users"></i> Gérer les employés
+                    </a>
+                    <a href="{% url 'projets_assignes' %}" class="btn btn-outline-primary btn-sm ms-2">
+                        <i class="fas fa-briefcase"></i> Voir mes projets
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if user.profile.role == 'entreprise' and not user.entreprise_representee and user.profile.est_employe %}
+        <!-- Section employé -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-user-tie"></i>
+                Mon entreprise
+            </div>
+            <div class="card-body">
+                <p><strong><i class="fas fa-building"></i> Entreprise:</strong> {{ user.profile.entreprise.nom|default:"Non définie" }}</p>
+                <p><strong><i class="fas fa-user"></i> Ajouté par:</strong> {{ user.profile.ajoute_par.get_full_name|default:"Non renseigné" }}</p>
+                <div class="text-center mt-3">
+                    <a href="{% url 'projets_assignes' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-briefcase"></i> Voir mes projets
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        <!-- Section Activité récente -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <i class="fas fa-history me-2"></i>
+                Activité récente
+            </div>
+            <div class="card-body">
+                {% if activites %}
+                    {% for activite in activites %}
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-{{ activite.icon }}"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">{{ activite.titre }}</div>
+                            <div class="activity-time">{{ activite.date|date:"d/m/Y" }}</div>
+                            <div class="activity-message text-muted small">{{ activite.message }}</div>
+                        </div>
+                        <span class="activity-status status-{{ activite.statut }}">
+                            {{ activite.message|truncatechars:30 }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Aucune activité récente</p>
+                        <small>Vos actions apparaîtront ici (commentaires, suivis, modifications...)</small>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

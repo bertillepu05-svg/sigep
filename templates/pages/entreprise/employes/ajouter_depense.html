@@ -1,0 +1,96 @@
+{% extends 'base.html' %} 
+
+{% block title %}Ajouter depense - {{ projet.titre }}{% endblock %} 
+
+{% block name %}Ajouter une dépense - {{ projet.titre }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="form-card">
+            <div class="mb-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Budget prévisionnel :</strong> {{ projet.budget_previsionnel|floatformat:0 }} CDF</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Déjà consommé :</strong> {{ budget_consomme|floatformat:0 }} CDF</p>
+                    </div>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar" style="width: {{ pourcentage_budget|default:0 }}%;">
+                        {{ pourcentage_budget|default:0 }}%
+                    </div>
+                </div>
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.budget_consomme.id_for_label }}">
+                                <i class="fas fa-coins"></i>{{ form.budget_consomme.label }} *
+                            </label>
+                            {{ form.budget_consomme }}
+                            {% if form.budget_consomme.errors %}
+                                <div class="text-danger small">{{ form.budget_consomme.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.date_mise_a_jour.id_for_label }}">
+                                <i class="fas fa-calendar-alt"></i>{{ form.date_mise_a_jour.label }} *
+                            </label>
+                            {{ form.date_mise_a_jour }}
+                            {% if form.date_mise_a_jour.errors %}
+                                <div class="text-danger small">{{ form.date_mise_a_jour.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.phase.id_for_label }}">
+                        <i class="fas fa-tasks"></i>{{ form.phase.label }}
+                    </label>
+                    {{ form.phase }}
+                    {% if form.phase.errors %}
+                        <div class="text-danger small">{{ form.phase.errors|join:", " }}</div>
+                    {% endif %}
+                    <small class="text-muted">Optionnel : liez cette dépense à une phase spécifique</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.commentaire.id_for_label }}">
+                        <i class="fas fa-comment"></i>{{ form.commentaire.label }}
+                    </label>
+                    {{ form.commentaire }}
+                    {% if form.commentaire.errors %}
+                        <div class="text-danger small">{{ form.commentaire.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'details_projets' projet.id_projet %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

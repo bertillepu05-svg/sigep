@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Modifier la dépense - {{ projet.titre }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        font-weight: 600;
+        color: #1e3c72;
+        margin-bottom: 8px;
+    }
+    .form-group label i {
+        color: #27bfd4;
+        margin-right: 8px;
+    }
+    .form-control, .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 12px 15px;
+        transition: all 0.3s;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #27bfd4;
+        box-shadow: 0 0 0 3px rgba(39,191,212,0.1);
+        outline: none;
+    }
+    .info-card {
+        background: #e7f5ff;
+        border-left: 4px solid #27bfd4;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+    }
+    .info-card h6 {
+        color: #1e3c72;
+        margin-bottom: 10px;
+    }
+    .progress-bar-custom {
+        height: 8px;
+        border-radius: 10px;
+        background: #e9ecef;
+        margin: 15px 0;
+    }
+    .progress-fill {
+        height: 100%;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #1e3c72, #27bfd4);
+        width: 0%;
+        transition: width 0.3s;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #1e3c72, #2a4a8a);
+        border: none;
+        padding: 12px 25px;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #27bfd4, #1e3c72);
+        transform: translateY(-2px);
+    }
+    .btn-secondary {
+        background: #6c757d;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+    }
+    .alert-danger {
+        background: #fee2e2;
+        border-left: 4px solid #dc3545;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+    .current-value {
+        background: #f8f9fa;
+        padding: 10px 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+    }
+    .current-value span {
+        font-weight: 700;
+        color: #1e3c72;
+    }
+</style>
+{% endblock %}
+
+{% block name %}Modifier la dépense - {{ projet.titre }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="form-card">
+            
+            <!-- Informations sur le projet -->
+            <div class="info-card">
+                <h6><i class="fas fa-project-diagram me-2"></i>Projet : {{ projet.titre }}</h6>
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <small class="text-muted">Budget prévisionnel :</small>
+                        <strong>{{ projet.budget_previsionnel|floatformat:0 }} CDF</strong>
+                    </div>
+                    <div class="col-md-6">
+                        <small class="text-muted">Budget déjà consommé :</small>
+                        <strong class="text-primary">{{ budget_consomme|floatformat:0 }} CDF</strong>
+                    </div>
+                </div>
+                <div class="progress-bar-custom">
+                    <div class="progress-fill" style="width: {{ pourcentage_budget|default:0 }}%;"></div>
+                </div>
+                <small class="text-muted">Avancement budgétaire : {{ pourcentage_budget|default:0 }}%</small>
+            </div>
+            
+            <!-- Valeur actuelle -->
+            <div class="current-value">
+                <i class="fas fa-info-circle me-2" style="color: #27bfd4;"></i>
+                Valeur actuelle : <span>{{ suivi.budget_consomme|floatformat:0 }} CDF</span>
+                <br>
+                <small class="text-muted">Date d'enregistrement : {{ suivi.date_mise_a_jour|date:"d/m/Y" }}</small>
+            </div>
+            
+            {% if form.non_field_errors %}
+                <div class="alert-danger">
+                    {% for error in form.non_field_errors %}
+                        <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.budget_consomme.id_for_label }}">
+                                <i class="fas fa-coins"></i>{{ form.budget_consomme.label }} *
+                            </label>
+                            {{ form.budget_consomme }}
+                            {% if form.budget_consomme.errors %}
+                                <div class="text-danger small mt-1">{{ form.budget_consomme.errors|join:", " }}</div>
+                            {% endif %}
+                            <small class="text-muted">Nouveau montant de la dépense</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.date_mise_a_jour.id_for_label }}">
+                                <i class="fas fa-calendar-alt"></i>{{ form.date_mise_a_jour.label }} *
+                            </label>
+                            {{ form.date_mise_a_jour }}
+                            {% if form.date_mise_a_jour.errors %}
+                                <div class="text-danger small mt-1">{{ form.date_mise_a_jour.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.phase.id_for_label }}">
+                                <i class="fas fa-tasks"></i>{{ form.phase.label }}
+                            </label>
+                            {{ form.phase }}
+                            {% if form.phase.errors %}
+                                <div class="text-danger small mt-1">{{ form.phase.errors|join:", " }}</div>
+                            {% endif %}
+                            <small class="text-muted">Optionnel : lier cette dépense à une phase</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.commentaire.id_for_label }}">
+                                <i class="fas fa-comment"></i>{{ form.commentaire.label }}
+                            </label>
+                            {{ form.commentaire }}
+                            {% if form.commentaire.errors %}
+                                <div class="text-danger small mt-1">{{ form.commentaire.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning mt-3">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Attention :</strong> La modification de cette dépense affectera le budget total du projet.
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'details_projets' projet.id_projet %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const budgetInput = document.querySelector('input[name="budget_consomme"]');
+        const ancienMontant = {{ suivi.budget_consomme }};
+        const totalActuel = {{ budget_consomme }};
+        const budgetPrevisionnel = {{ projet.budget_previsionnel }};
+        const pourcentageElement = document.querySelector('.progress-fill');
+        const pourcentageText = document.querySelector('.info-card small');
+        
+        if (budgetInput) {
+            budgetInput.addEventListener('input', function() {
+                const nouveauMontant = parseFloat(this.value) || 0;
+                const difference = nouveauMontant - ancienMontant;
+                const nouveauTotal = totalActuel + difference;
+                const nouveauPourcentage = (nouveauTotal / budgetPrevisionnel) * 100;
+                
+                // Mettre à jour la barre de progression
+                if (pourcentageElement) {
+                    pourcentageElement.style.width = Math.min(nouveauPourcentage, 100) + '%';
+                }
+                
+                // Mettre à jour le texte
+                if (pourcentageText) {
+                    pourcentageText.textContent = `Avancement budgétaire : ${nouveauPourcentage.toFixed(1)}%`;
+                }
+                
+                // Afficher un message d'information
+                const infoDiv = document.querySelector('.current-value');
+                if (infoDiv && difference !== 0) {
+                    let message = '';
+                    if (difference > 0) {
+                        message = `<span style="color: #dc3545;">⚠️ Augmentation de ${difference.toLocaleString()} CDF</span>`;
+                    } else if (difference < 0) {
+                        message = `<span style="color: #28a745;">✅ Réduction de ${Math.abs(difference).toLocaleString()} CDF</span>`;
+                    }
+                    
+                    const existingMsg = document.querySelector('.change-message');
+                    if (existingMsg) existingMsg.remove();
+                    
+                    if (message) {
+                        const msgDiv = document.createElement('div');
+                        msgDiv.className = 'change-message mt-2';
+                        msgDiv.innerHTML = message;
+                        infoDiv.appendChild(msgDiv);
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

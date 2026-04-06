@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Modifier la phase - {{ phase.nom_phase }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        font-weight: 600;
+        color: #1e3c72;
+        margin-bottom: 8px;
+    }
+    .form-group label i {
+        color: #27bfd4;
+        margin-right: 8px;
+    }
+    .form-control, .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 12px 15px;
+        transition: all 0.3s;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #27bfd4;
+        box-shadow: 0 0 0 3px rgba(39,191,212,0.1);
+        outline: none;
+    }
+    .progress-slider {
+        width: 100%;
+        margin: 15px 0;
+    }
+    .progress-value {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #1e3c72;
+    }
+    .current-photo {
+        max-height: 150px;
+        border-radius: 10px;
+        margin-top: 10px;
+        border: 2px solid #e9ecef;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #1e3c72, #2a4a8a);
+        border: none;
+        padding: 12px 25px;
+        border-radius: 30px;
+        font-weight: 600;
+    }
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #27bfd4, #1e3c72);
+        transform: translateY(-2px);
+    }
+    .btn-secondary {
+        background: #6c757d;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 30px;
+        font-weight: 600;
+    }
+    .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+    }
+    .info-phase {
+        background: #e7f5ff;
+        border-left: 4px solid #27bfd4;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block name %}Modifier la phase : {{ phase.nom_phase }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="form-card">
+            
+            <!-- Informations sur le projet -->
+            <div class="info-phase">
+                <i class="fas fa-project-diagram me-2"></i>
+                <strong>Projet :</strong> {{ phase.projet.titre }}
+                <br>
+                <i class="fas fa-building me-2"></i>
+                <strong>Entreprise :</strong> {{ phase.projet.entreprise.nom|default:"Non assignée" }}
+            </div>
+            
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <!-- Nom de la phase -->
+                <div class="form-group">
+                    <label for="{{ form.nom_phase.id_for_label }}">
+                        <i class="fas fa-tag"></i>Nom de la phase *
+                    </label>
+                    {{ form.nom_phase }}
+                    {% if form.nom_phase.errors %}
+                        <div class="text-danger small mt-1">{{ form.nom_phase.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="{{ form.description.id_for_label }}">
+                        <i class="fas fa-align-left"></i>Description
+                    </label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <div class="text-danger small mt-1">{{ form.description.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                
+                <!-- Dates -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.date_debut.id_for_label }}">
+                                <i class="fas fa-calendar-alt"></i>Date de début *
+                            </label>
+                            {{ form.date_debut }}
+                            {% if form.date_debut.errors %}
+                                <div class="text-danger small mt-1">{{ form.date_debut.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="{{ form.date_fin.id_for_label }}">
+                                <i class="fas fa-calendar-check"></i>Date de fin
+                            </label>
+                            {{ form.date_fin }}
+                            {% if form.date_fin.errors %}
+                                <div class="text-danger small mt-1">{{ form.date_fin.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Avancement avec slider -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-chart-line"></i>Pourcentage d'avancement *
+                    </label>
+                    <div class="d-flex align-items-center gap-3">
+                        {{ form.pourcentage_avancement }}
+                        <span class="progress-value" id="progressValue">0%</span>
+                    </div>
+                    <input type="range" id="progressSlider" min="0" max="100" step="1" 
+                           value="{{ phase.pourcentage_avancement|default:0 }}" 
+                           class="progress-slider form-range">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        0% = Pas commencé, 100% = Terminé
+                    </small>
+                    {% if form.pourcentage_avancement.errors %}
+                        <div class="text-danger small mt-1">{{ form.pourcentage_avancement.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                
+                <!-- Photo -->
+                <div class="form-group">
+                    <label for="{{ form.photo.id_for_label }}">
+                        <i class="fas fa-camera"></i>Photo (optionnelle)
+                    </label>
+                    {{ form.photo }}
+                    {% if phase.photo %}
+                        <div class="mt-2">
+                            <p class="text-muted small mb-1">Photo actuelle :</p>
+                            <img src="{{ phase.photo.url }}" alt="{{ phase.nom_phase }}" class="current-photo">
+                            <br>
+                            <small class="text-muted">Téléchargez une nouvelle image pour remplacer celle-ci.</small>
+                        </div>
+                    {% endif %}
+                    {% if form.photo.errors %}
+                        <div class="text-danger small mt-1">{{ form.photo.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                
+                <!-- Boutons -->
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'details_projets' phase.projet.id_projet %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                    </button>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
