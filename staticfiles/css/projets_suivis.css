@@ -1,0 +1,193 @@
+
+    /* ===== STYLES GÉNÉRAUX ===== */
+    .project-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .project-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(30,60,114,0.15);
+    }
+
+    .project-image {
+        height: 200px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .project-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+    }
+
+    .project-card:hover .project-image img {
+        transform: scale(1.05);
+    }
+
+    .project-status {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 5px 12px;
+        border-radius: 30px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+
+    .status-avenir { background: #6c757d; color: white; }
+    .status-cours { background: #27bfd4; color: white; }
+    .status-termine { background: #28a745; color: white; }
+    .status-annule { background: #6c757d; color: white; }
+    .status-suspendu { background: #ffc107; color: #1e3c72; }
+
+    .project-content {
+        padding: 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .project-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1e3c72;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .project-title i {
+        color: #27bfd4;
+        font-size: 1.1rem;
+    }
+
+    .project-description {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+        line-height: 1.5;
+        flex: 1;
+    }
+
+    .project-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+    .meta-item i {
+        color: #27bfd4;
+        width: 16px;
+    }
+
+    .progress-container {
+        margin: 15px 0;
+    }
+
+    .progress-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        margin-bottom: 5px;
+        color: #6c757d;
+    }
+
+    .progress {
+        height: 6px;
+        background: #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        background: linear-gradient(135deg, #1e3c72, #27bfd4);
+        border-radius: 10px;
+    }
+
+    .project-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding-top: 15px;
+        border-top: 1px solid #e9ecef;
+        margin-top: auto;
+    }
+
+    .btn-outline-primary {
+        background: transparent;
+        color: #1e3c72;
+        border: 2px solid #1e3c72;
+        padding: 8px 16px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-outline-primary:hover {
+        background: linear-gradient(135deg, #1e3c72, #2a4a8a);
+        color: white;
+        border-color: transparent;
+        transform: translateX(5px);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: #dee2e6;
+        margin-bottom: 20px;
+    }
+
+    .empty-state h4 {
+        color: #1e3c72;
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+        .project-footer {
+            flex-direction: column;
+        }
+        
+        .btn-outline-primary, .btn-danger-outline {
+            width: 100%;
+            justify-content: center;
+        }
+    }

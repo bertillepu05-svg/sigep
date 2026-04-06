@@ -1,0 +1,305 @@
+      h3 {
+        color: #1e3c72;
+        font-weight: 600;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        transition: transform 0.3s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card-header {
+        background-color: #1e3c72 !important;
+        color: white !important;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 15px 20px;
+        font-weight: 600;
+    }
+
+    .card-header i {
+        color: #27bfd4;
+    }
+
+    .card-title h3 {
+        color: #1e3c72;
+        margin-bottom: 10px;
+        font-size: 1.5rem;
+    }
+
+    /* Badges de statut */
+    .badge-statut {
+        padding: 8px 16px;
+        border-radius: 30px;
+        font-weight: 500;
+    }
+
+    .badge-avenir {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .badge-cours {
+        background-color: #27bfd4;
+        color: white;
+    }
+
+    .badge-termine {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .badge-retard {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .badge-annule {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    /* Photos */
+    .photo-projet {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .photo-historique {
+        height: 100px;
+        width: 150px;
+        object-fit: cover;
+        border-radius: 10px;
+        transition: transform 0.3s;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        cursor: pointer;
+    }
+
+    .photo-historique:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    /* Timeline */
+    .timeline {
+        position: relative;
+        padding: 20px 0;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #e9ecef;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-left: 50px;
+        margin-bottom: 30px;
+    }
+
+    .timeline-marker {
+        position: absolute;
+        left: 12px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #1e3c72;
+        border: 3px solid #fff;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        z-index: 2;
+    }
+
+    .timeline-marker.bg-primary { background: #27bfd4; }
+    .timeline-marker.bg-success { background: #28a745; }
+    .timeline-marker.bg-warning { background: #ffc107; }
+    .timeline-marker.bg-info { background: #17a2b8; }
+    .timeline-marker.bg-danger { background: #dc3545; }
+    .timeline-marker.bg-secondary { background: #6c757d; }
+
+    .timeline-content {
+        background: #f8f9fa;
+        padding: 15px 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .timeline-content h6 {
+        color: #1e3c72;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    /* Barre de progression */
+    .progress {
+        background-color: #e9ecef;
+        border-radius: 30px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        background-color: #1e3c72;
+        color: white;
+        font-weight: 600;
+    }
+
+    .progress-bar.bg-success { background: #28a745; }
+    .progress-bar.bg-warning { background: #ffc107; color: #1e3c72; }
+    .progress-bar.bg-danger { background: #dc3545; }
+
+    /* Boutons d'action */
+    .btn-action {
+        border-radius: 30px;
+        padding: 8px 20px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-follow {
+        background-color: #27bfd4;
+        color: white;
+        border: none;
+    }
+
+    .btn-follow:hover {
+        background-color: #1e3c72;
+    }
+
+    .btn-following {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-following:hover {
+        background-color: #c82333;
+    }
+
+    /* Étoiles pour la notation */
+.star-rating-input {
+    display: flex;
+    gap: 10px;
+    cursor: pointer;
+    }
+
+    .star-rating-input i {
+        font-size: 2rem;
+        color: #ddd;
+        transition: all 0.2s;
+    }
+
+    .star-rating-input i.active,
+    .star-rating-input i.hover {
+        color: #ffc107;
+    }
+
+    .star-rating-input i:hover {
+        transform: scale(1.1);
+    }
+
+    /* Avis item */
+    .avis-item {
+        transition: all 0.3s;
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    .avis-item:hover {
+        background: #f8f9fa;
+    }
+
+
+    /* Commentaires */
+    .comment-item {
+    transition: all 0.3s;
+    border-bottom: 1px solid #e9ecef;
+    padding: 15px 0;
+    }
+
+    .comment-item:last-child {
+        border-bottom: none;
+    }
+
+    .comment-item:hover {
+        background: #f8f9fa;
+        padding-left: 10px;
+        border-radius: 10px;
+    }
+
+    .comment-actions {
+        opacity: 0.7;
+        transition: opacity 0.3s;
+    }
+
+    .comment-item:hover .comment-actions {
+        opacity: 1;
+    }
+
+    /* Pagination */
+    .pagination .page-link {
+        color: #1e3c72;
+        border: none;
+        margin: 0 3px;
+        border-radius: 8px;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #1e3c72;
+        color: white;
+    }
+
+    .pagination .page-link:hover {
+        background-color: #27bfd4;
+        color: white;
+    }
+
+    /* Footer */
+    footer {
+        background-color: #1e3c72;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        border-radius: 12px;
+        margin-top: 40px;
+    }
+
+    footer p {
+        opacity: 0.9;
+        font-size: 0.95rem;
+        margin: 0;
+    }
+
+    /* Bouton retour */
+    .btn-retour {
+        background-color: white;
+        color: #1e3c72;
+        border: 2px solid #1e3c72;
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    .btn-retour:hover {
+        background-color: #1e3c72;
+        color: white;
+        transform: translateX(-5px);
+    }
+
+

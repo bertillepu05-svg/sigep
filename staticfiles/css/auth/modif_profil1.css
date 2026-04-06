@@ -1,0 +1,219 @@
+
+    /* Cartes */
+    .card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a4a8a 100%);
+        color: white;
+        border-radius: 20px 20px 0 0 !important;
+        padding: 18px 25px;
+        border-bottom: 3px solid #27bfd4;
+    }
+
+    .card-header i {
+        color: #27bfd4;
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+
+    .card-body {
+        padding: 30px;
+        background: white;
+    }
+
+    /* Formulaire */
+    .form-label {
+        font-weight: 600;
+        color: #1e3c72;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+
+    .form-label i {
+        color: #27bfd4;
+        margin-right: 8px;
+        width: 18px;
+    }
+
+    .form-control, .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 12px 15px;
+        font-size: 0.95rem;
+        transition: all 0.3s;
+        background: #f8fafc;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #27bfd4;
+        box-shadow: 0 0 0 4px rgba(39,191,212,0.1);
+        background: white;
+    }
+
+    .form-control.is-invalid, .form-select.is-invalid {
+        border-color: #dc3545;
+    }
+
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.85rem;
+        margin-top: 5px;
+    }
+
+    /* Photo de profil */
+    .photo-section {
+        text-align: center;
+        padding: 20px;
+        background: #f8fafc;
+        border-radius: 15px;
+    }
+
+    .current-photo {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid white;
+        box-shadow: 0 8px 20px rgba(30,60,114,0.2);
+        margin-bottom: 15px;
+    }
+
+    .photo-upload {
+        position: relative;
+        display: inline-block;
+    }
+
+    .photo-upload input {
+        display: none;
+    }
+
+    .photo-upload label {
+        background: linear-gradient(135deg, #27bfd4, #1e3c72);
+        color: white;
+        padding: 10px 25px;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 500;
+        border: none;
+    }
+
+    .photo-upload label:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(39,191,212,0.3);
+    }
+
+    .photo-upload label i {
+        font-size: 1.1rem;
+    }
+
+    .photo-hint {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 10px;
+    }
+
+    /* Boutons */
+    .btn-action {
+        padding: 12px 30px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #1e3c72, #2a4a8a);
+        color: white;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2a4a8a, #1e3c72);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(30,60,114,0.3);
+        color: white;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #1e3c72;
+        border: 2px solid #1e3c72;
+    }
+
+    .btn-secondary:hover {
+        background: #1e3c72;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(30,60,114,0.2);
+    }
+
+    .btn-danger {
+        background: #fee2e2;
+        color: #dc2626;
+        border: 1px solid #dc2626;
+    }
+
+    .btn-danger:hover {
+        background: #dc2626;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(220,38,38,0.2);
+    }
+
+    /* Sections */
+    .form-section {
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 25px;
+        margin-bottom: 25px;
+    }
+
+    .form-section:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1e3c72;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-title i {
+        color: #27bfd4;
+        font-size: 1.3rem;
+    }
+
+    /* Alert info */
+    .alert-info-custom {
+        background: #e7f5ff;
+        border-left: 4px solid #27bfd4;
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .alert-info-custom i {
+        color: #27bfd4;
+        margin-right: 10px;
+    }
+
+    
