@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 from decouple import config, Csv
 import dj_database_url
-from django.contrib.auth.models import User
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -145,6 +144,3 @@ os.makedirs(os.path.join(MEDIA_ROOT, 'upload_projets'), exist_ok=True)
 os.makedirs(os.path.join(MEDIA_ROOT, 'upload_phases'), exist_ok=True)
 
 
-if not User.objects.filter(username='sigep').exists():
-    User.objects.create_superuser('sigep', 'sigep@gamil.com', 'sigep')
-    print("Super-utilisateur créé automatiquement.")
